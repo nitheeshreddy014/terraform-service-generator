@@ -1,0 +1,273 @@
+"""
+provider.py
+-----------
+Handles:
+  1. Resolving the correct registry namespace for any provider name.
+  2. Fetching the latest published version from the Terraform Registry.
+  3. Writing a temporary Terraform workspace, running `terraform init`
+     and `terraform providers schema -json`, then returning the raw schema dict.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+import shutil
+import subprocess
+import tempfile
+from pathlib import Path
+from typing import Any
+
+import httpx
+
+logger = logging.getLogger(__name__)
+
+
+def _max_semver(versions: list[str]) -> str:
+    """
+    Return the highest semantic version from a list of version strings.
+    Compares numerically per segment so '5.1.0' > '3.69.0' correctly.
+    """
+    def _key(v: str):
+        try:
+            return tuple(int(x) for x in v.strip().split("."))
+        except (ValueError, AttributeError):
+            return (0, 0, 0)
+    return max(versions, key=_key)
+
+
+REGISTRY_BASE  = "https://registry.terraform.io/v1"
+REGISTRY_BASE2 = "https://registry.terraform.io/v2"
+SEARCH_URL     = f"{REGISTRY_BASE}/providers"
+
+
+# ---------------------------------------------------------------------------
+# Public helpers
+# ---------------------------------------------------------------------------
+
+async def resolve_provider(provider_name: str) -> dict[str, str]:
+    """
+    Returns {'namespace': '...', 'type': '...', 'version': '...'} for the
+    given provider name by querying the Terraform public registry.
+
+    Tries 'hashicorp/<name>' first (covers 95 % of cases), then falls back
+    to the registry search endpoint.
+    """
+    name = provider_name.strip().lower()
+
+    # --- Try canonical hashicorp namespace first ---
+    candidate = await _fetch_provider_meta("hashicorp", name)
+    if candidate:
+        return candidate
+
+    # --- Registry search fallback ---
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.get(SEARCH_URL, params={"q": name, "limit": 5})
+        resp.raise_for_status()
+        data = resp.json()
+
+    providers = data.get("providers", [])
+    if not providers:
+        raise ValueError(
+            f"Provider '{name}' not found in the Terraform Registry. "
+            "Check the spelling and try again."
+        )
+
+    # Prefer exact type match
+    match = next((p for p in providers if p["attributes"]["full-name"].split("/")[1] == name), providers[0])
+    attrs      = match["attributes"]
+    namespace  = attrs["namespace"]
+    ptype      = attrs["full-name"].split("/")[1]
+
+    meta = await _fetch_provider_meta(namespace, ptype)
+    if not meta:
+        raise ValueError(f"Could not retrieve metadata for {namespace}/{ptype}.")
+    return meta
+
+
+async def fetch_schema(provider_name: str) -> tuple[dict[str, Any], dict[str, str]]:
+    """
+    Full pipeline:
+      1. Resolve provider → namespace / type / latest version.
+      2. Create a throw-away Terraform workspace.
+      3. `terraform init -backend=false -no-color`
+      4. `terraform providers schema -json`
+      5. Return (schema_dict, provider_meta).
+
+    Raises RuntimeError if terraform is not on PATH or any step fails.
+    """
+    _require_terraform()
+
+    provider_meta = await resolve_provider(provider_name)
+    namespace     = provider_meta["namespace"]
+    ptype         = provider_meta["type"]
+    version       = provider_meta["version"]
+
+    logger.info("Using provider %s/%s version %s", namespace, ptype, version)
+
+    with tempfile.TemporaryDirectory(prefix="tfgen_") as tmpdir:
+        _write_versions_tf(tmpdir, namespace, ptype, version)
+        _terraform_init(tmpdir)
+        schema = _terraform_schema(tmpdir)
+
+    return schema, provider_meta
+
+
+# ---------------------------------------------------------------------------
+# Internal helpers
+# ---------------------------------------------------------------------------
+
+async def _fetch_provider_meta(namespace: str, ptype: str) -> dict[str, str] | None:
+    """
+    Fetch the latest version for namespace/ptype using three strategies:
+      1. Terraform Registry v2 API  → data.attributes.latest-version  (most reliable)
+      2. v1 /versions endpoint       → last entry in the versions list
+      3. v1 flat provider endpoint   → 'version' or 'tag' field
+    Returns None if the provider is not found (404).
+    """
+    async with httpx.AsyncClient(timeout=30) as client:
+
+        # ── Strategy 1: v2 API ────────────────────────────────────────────
+        try:
+            url2  = f"{REGISTRY_BASE2}/providers/{namespace}/{ptype}"
+            resp2 = await client.get(url2)
+            if resp2.status_code == 200:
+                attrs   = resp2.json().get("data", {}).get("attributes", {})
+                version = attrs.get("latest-version", "")
+                if version:
+                    logger.debug("v2 API resolved %s/%s → %s", namespace, ptype, version)
+                    return {"namespace": namespace, "type": ptype, "version": version}
+        except Exception:
+            pass
+
+        # Strategy 2: v1 /versions endpoint — pick TRUE semver max
+        try:
+            url_ver  = f"{REGISTRY_BASE}/providers/{namespace}/{ptype}/versions"
+            resp_ver = await client.get(url_ver)
+            if resp_ver.status_code == 200:
+                versions_data = resp_ver.json().get("versions", [])
+                if versions_data:
+                    ver_strings = [
+                        v["version"]
+                        for v in versions_data
+                        if isinstance(v, dict) and v.get("version")
+                    ]
+                    if ver_strings:
+                        version = _max_semver(ver_strings)
+                        logger.info("v1/versions resolved %s/%s -> %s", namespace, ptype, version)
+                        return {"namespace": namespace, "type": ptype, "version": version}
+        except Exception as exc:
+            logger.debug("v1/versions failed: %s", exc)
+
+        # Strategy 3: v1 flat endpoint
+        try:
+            url_flat  = f"{REGISTRY_BASE}/providers/{namespace}/{ptype}"
+            resp_flat = await client.get(url_flat)
+            if resp_flat.status_code == 404:
+                return None
+            if resp_flat.status_code == 200:
+                data     = resp_flat.json()
+                explicit = (
+                    data.get("version")
+                    or data.get("tag")
+                    or data.get("attributes", {}).get("latest-version", "")
+                )
+                if explicit:
+                    version = str(explicit).strip()
+                else:
+                    raw = data.get("versions", [])
+                    if raw:
+                        if isinstance(raw[0], dict):
+                            ver_strings = [v.get("version", "") for v in raw if v.get("version")]
+                        else:
+                            ver_strings = [str(v) for v in raw if v]
+                        version = _max_semver(ver_strings) if ver_strings else ""
+                    else:
+                        version = ""
+                if version:
+                    logger.info("v1 flat resolved %s/%s -> %s", namespace, ptype, version)
+                    return {"namespace": namespace, "type": ptype, "version": version}
+        except Exception as exc:
+            logger.debug("v1 flat failed: %s", exc)
+
+    return None
+
+
+def _write_versions_tf(directory: str, namespace: str, ptype: str, version: str) -> None:
+    """Write the minimal versions.tf needed to initialise the provider."""
+    content = f"""\
+terraform {{
+  required_version = ">= 1.3.0"
+  required_providers {{
+    {ptype} = {{
+      source  = "{namespace}/{ptype}"
+      version = "~> {version}"
+    }}
+  }}
+}}
+"""
+    Path(directory, "versions.tf").write_text(content)
+
+
+def _terraform_init(directory: str) -> None:
+    """Run terraform init inside *directory*, raising on failure."""
+    cmd = [_terraform_exe(), "init", "-backend=false", "-no-color", "-input=false"]
+    result = subprocess.run(
+        cmd,
+        cwd=directory,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"terraform init failed:\n{result.stdout}\n{result.stderr}"
+        )
+    logger.info("terraform init succeeded.")
+
+
+def _terraform_schema(directory: str) -> dict[str, Any]:
+    """Run `terraform providers schema -json` and return the parsed dict."""
+    cmd = [_terraform_exe(), "providers", "schema", "-json"]
+    result = subprocess.run(
+        cmd,
+        cwd=directory,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"terraform providers schema failed:\n{result.stdout}\n{result.stderr}"
+        )
+    try:
+        return json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Could not parse schema JSON: {exc}") from exc
+
+
+def _require_terraform() -> None:
+    """Raise RuntimeError if the `terraform` binary is not found."""
+    if _terraform_exe() is None:
+        raise RuntimeError(
+            "The `terraform` CLI was not found on PATH or next to main.py. "
+            "Please install Terraform (https://developer.hashicorp.com/terraform/install) "
+            "or place terraform.exe in the terraform-generator/ directory."
+        )
+
+
+def _terraform_exe() -> str | None:
+    """
+    Resolve the terraform binary.
+    Priority:
+      1. terraform.exe / terraform sitting next to main.py  (bundled)
+      2. Anywhere on PATH
+    """
+    # Directory that contains main.py (project root)
+    project_root = Path(__file__).parent.parent
+
+    for candidate in ("terraform.exe", "terraform"):
+        local = project_root / candidate
+        if local.exists():
+            return str(local)
+
+    return shutil.which("terraform")

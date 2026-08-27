@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  terraform-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TERRAFORM_VERSION: "1.8.5"
+    image: terraform-generator:latest
+    container_name: terraform-generator
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist generated zips between restarts
+      - ./outputs:/app/outputs
+      # Persist Terraform provider cache (avoids re-downloading on restart)
+      - tf-plugin-cache:/app/.terraform.d/plugin-cache
+    environment:
+      - TF_PLUGIN_CACHE_DIR=/app/.terraform.d/plugin-cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  tf-plugin-cache:

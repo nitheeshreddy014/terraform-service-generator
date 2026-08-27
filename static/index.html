@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terraform Service Generator</title>
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --border:    #2e3147;
+      --accent:    #7c3aed;
+      --accent-h:  #6d28d9;
+      --accent-g:  #4f46e5;
+      --success:   #10b981;
+      --error:     #ef4444;
+      --warn:      #f59e0b;
+      --text:      #e2e8f0;
+      --muted:     #94a3b8;
+      --radius:    10px;
+      --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* ── Header ───────────────────────────────────────────────────── */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      max-width: 660px;
+    }
+    .logo {
+      font-size: 2.6rem;
+      margin-bottom: .5rem;
+    }
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .5rem;
+    }
+    header p {
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.6;
+    }
+    header p code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .1rem .35rem;
+      font-family: var(--mono);
+      font-size: .85rem;
+      color: #a78bfa;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 560px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+
+    /* ── Form ─────────────────────────────────────────────────────── */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      margin-bottom: 1.25rem;
+    }
+    label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    input[type="text"] {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 1rem;
+      font-family: var(--mono);
+      padding: .7rem 1rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124,58,237,.25);
+    }
+    input[type="text"]::placeholder { color: #475569; }
+
+    /* ── Examples row ─────────────────────────────────────────────── */
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .4rem;
+    }
+    .examples span {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-right: .1rem;
+    }
+    .chip {
+      background: rgba(124,58,237,.15);
+      border: 1px solid rgba(124,58,237,.35);
+      border-radius: 999px;
+      color: #c4b5fd;
+      cursor: pointer;
+      font-size: .75rem;
+      padding: .15rem .6rem;
+      transition: background .15s;
+      user-select: none;
+    }
+    .chip:hover { background: rgba(124,58,237,.3); }
+
+    /* ── Divider ──────────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+
+    /* ── Button ───────────────────────────────────────────────────── */
+    button[type="submit"] {
+      width: 100%;
+      padding: .8rem;
+      border: none;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, var(--accent), var(--accent-g));
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+    button[type="submit"]:hover:not(:disabled) { opacity: .9; }
+    button[type="submit"]:active:not(:disabled) { transform: scale(.98); }
+    button[type="submit"]:disabled { opacity: .55; cursor: not-allowed; }
+
+    /* ── Status / result area ─────────────────────────────────────── */
+    #status {
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    .alert {
+      border-radius: var(--radius);
+      padding: .9rem 1rem;
+      font-size: .9rem;
+      line-height: 1.5;
+      display: flex;
+      gap: .6rem;
+      align-items: flex-start;
+    }
+    .alert.info    { background: rgba(79,70,229,.15); border: 1px solid rgba(79,70,229,.4); color: #a5b4fc; }
+    .alert.success { background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.4); color: #6ee7b7; }
+    .alert.error   { background: rgba(239,68,68,.12);  border: 1px solid rgba(239,68,68,.4);  color: #fca5a5; }
+    .alert-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
+
+    /* ── Result card ──────────────────────────────────────────────── */
+    #result-card {
+      margin-top: 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: none;
+    }
+    #result-card h3 {
+      font-size: .9rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: .75rem;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: .3rem .8rem;
+      font-size: .875rem;
+      margin-bottom: 1rem;
+    }
+    .meta-grid .key { color: var(--muted); }
+    .meta-grid .val { font-family: var(--mono); color: #a78bfa; }
+
+    /* ── Download button ──────────────────────────────────────────── */
+    #download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: linear-gradient(135deg, var(--success), #059669);
+      border: none;
+      border-radius: var(--radius);
+      color: #fff;
+      cursor: pointer;
+      font-size: .95rem;
+      font-weight: 600;
+      padding: .7rem 1.4rem;
+      text-decoration: none;
+      transition: opacity .2s;
+      width: 100%;
+      justify-content: center;
+    }
+    #download-btn:hover { opacity: .88; }
+
+    /* ── Resource list ────────────────────────────────────────────── */
+    #resource-list {
+      list-style: none;
+      margin-top: .75rem;
+      display: flex;
+      flex-direction: column;
+      gap: .3rem;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    #resource-list li {
+      background: rgba(124,58,237,.1);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      font-family: var(--mono);
+      font-size: .78rem;
+      color: #c4b5fd;
+      padding: .3rem .6rem;
+    }
+
+    /* ── Spinner ──────────────────────────────────────────────────── */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Steps ────────────────────────────────────────────────────── */
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      margin-top: .6rem;
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+    }
+    .steps li {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      font-size: .83rem;
+      color: var(--muted);
+    }
+    .steps li::before {
+      counter-increment: step;
+      content: counter(step);
+      background: var(--border);
+      border-radius: 50%;
+      color: var(--text);
+      font-size: .7rem;
+      font-weight: 700;
+      min-width: 1.3rem;
+      height: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .steps li.active { color: #a5b4fc; }
+    .steps li.active::before { background: var(--accent); color: #fff; }
+    .steps li.done { color: var(--success); }
+    .steps li.done::before { background: var(--success); content: '✓'; color: #fff; }
+
+    /* ── Footer ───────────────────────────────────────────────────── */
+    footer {
+      margin-top: 3rem;
+      font-size: .78rem;
+      color: #334155;
+      text-align: center;
+    }
+    footer a { color: #475569; text-decoration: none; }
+    footer a:hover { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <header>
+    <div class="logo">⚡</div>
+    <h1>Terraform Service Generator</h1>
+    <p>
+      Enter a cloud provider (e.g. <code>aws</code>, <code>azurerm</code>, <code>google</code>)
+      and a service prefix (e.g. <code>s3</code>, <code>ec2</code>, <code>storage</code>).
+      We'll fetch the <strong>latest provider schema</strong> and generate a complete,
+      ready-to-use Terraform module folder — no AI, no paid APIs.
+    </p>
+  </header>
+
+  <!-- ── Main card ───────────────────────────────────────────────── -->
+  <div class="card">
+    <form id="gen-form" autocomplete="off">
+
+      <!-- Provider input -->
+      <div class="form-group">
+        <label for="provider">Cloud Provider</label>
+        <input
+          id="provider"
+          name="provider"
+          type="text"
+          placeholder="aws"
+          required
+          spellcheck="false"
+        />
+        <div class="examples">
+          <span>Quick-fill:</span>
+          <span class="chip" onclick="fill('provider','aws')">aws</span>
+          <span class="chip" onclick="fill('provider','azurerm')">azurerm</span>
+          <span class="chip" onclick="fill('provider','google')">google</span>
+          <span class="chip" onclick="fill('provider','kubernetes')">kubernetes</span>
+          <span class="chip" onclick="fill('provider','vault')">vault</span>
+        </div>
+      </div>
+
+      <!-- Service input -->
+      <div class="form-group">
+        <label for="service">Service / Resource Prefix</label>
+        <input
+          id="service"
+          name="service"
+          type="text"
+          placeholder="s3"
+          required
+          spellcheck="false"
+        />
+        <small style="color:#64748b;font-size:.78rem;margin-top:.25rem;display:block;">
+          &#9432; Lowercase, no spaces or underscores &mdash;
+          e.g. <code style="color:#a78bfa;background:#0f1117;padding:.1rem .3rem;border-radius:4px;">bedrockagent</code>,
+          <code style="color:#a78bfa;background:#0f1117;padding:.1rem .3rem;border-radius:4px;">bedrockagentcore</code>,
+          <code style="color:#a78bfa;background:#0f1117;padding:.1rem .3rem;border-radius:4px;">ec2</code>.
+          The error message lists every valid service if unsure.
+        </small>
+        <div class="examples">
+          <span>Quick-fill:</span>
+          <span class="chip" onclick="fill('service','s3')">s3</span>
+          <span class="chip" onclick="fill('service','ec2')">ec2</span>
+          <span class="chip" onclick="fill('service','lambda')">lambda</span>
+          <span class="chip" onclick="fill('service','storage')">storage</span>
+          <span class="chip" onclick="fill('service','compute')">compute</span>
+          <span class="chip" onclick="fill('service','network')">network</span>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <button type="submit" id="gen-btn">
+        <span id="btn-icon">⚡</span>
+        <span id="btn-text">Generate Terraform Modules</span>
+      </button>
+    </form>
+
+    <!-- ── Status area ─────────────────────────────────────────── -->
+    <div id="status">
+
+      <!-- Progress steps shown while loading -->
+      <div id="progress-box" class="alert info" style="display:none;">
+        <span class="alert-icon">⏳</span>
+        <div style="flex:1">
+          <strong>Generating…</strong> This may take 30–90 s the first time
+          (Terraform downloads the provider binary).
+          <ul class="steps" id="steps-list" style="margin-top:.5rem;">
+            <li id="step-1">Resolving latest provider version</li>
+            <li id="step-2">Running terraform init</li>
+            <li id="step-3">Dumping provider schema</li>
+            <li id="step-4">Parsing service resources</li>
+            <li id="step-5">Writing module files</li>
+            <li id="step-6">Zipping output</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Error box -->
+      <div id="error-box" class="alert error" style="display:none;">
+        <span class="alert-icon">✖</span>
+        <span id="error-text"></span>
+      </div>
+
+    </div><!-- /#status -->
+
+    <!-- ── Result card (shown on success) ──────────────────────── -->
+    <div id="result-card">
+      <h3>✔ Generation complete</h3>
+      <div class="meta-grid" id="meta-grid"></div>
+      <a id="download-btn" href="#" download>
+        ⬇ Download ZIP
+      </a>
+      <ul id="resource-list"></ul>
+    </div>
+
+  </div><!-- /.card -->
+
+  <footer>
+    <p>
+      Open-source · MIT License ·
+      <a href="/docs" target="_blank">API Docs (Swagger)</a> ·
+      <a href="https://github.com/your-org/terraform-generator" target="_blank">GitHub</a>
+    </p>
+  </footer>
+
+  <!-- ── JavaScript ──────────────────────────────────────────────── -->
+  <script>
+    // Quick-fill helper for chips
+    function fill(fieldId, value) {
+      document.getElementById(fieldId).value = value;
+      document.getElementById(fieldId).focus();
+    }
+
+    // Step animator (cycles through steps while waiting)
+    const stepIds = ['step-1','step-2','step-3','step-4','step-5','step-6'];
+    let stepTimer = null;
+    let currentStep = 0;
+
+    function startSteps() {
+      currentStep = 0;
+      stepIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.className = '';
+      });
+      advanceStep();
+    }
+
+    function advanceStep() {
+      if (currentStep >= stepIds.length) return;
+      if (currentStep > 0) {
+        document.getElementById(stepIds[currentStep - 1]).className = 'done';
+      }
+      document.getElementById(stepIds[currentStep]).className = 'active';
+      currentStep++;
+      // Each step nominally takes ~15 s; we animate faster for UX
+      stepTimer = setTimeout(advanceStep, 14000);
+    }
+
+    function finishSteps() {
+      clearTimeout(stepTimer);
+      stepIds.forEach(id => {
+        document.getElementById(id).className = 'done';
+      });
+    }
+
+    function stopSteps() {
+      clearTimeout(stepTimer);
+    }
+
+    // Form submit
+    document.getElementById('gen-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const provider = document.getElementById('provider').value.trim();
+      const service  = document.getElementById('service').value.trim();
+
+      // Reset UI
+      const statusEl   = document.getElementById('status');
+      const progressEl = document.getElementById('progress-box');
+      const errorEl    = document.getElementById('error-box');
+      const resultEl   = document.getElementById('result-card');
+      const genBtn     = document.getElementById('gen-btn');
+      const btnIcon    = document.getElementById('btn-icon');
+      const btnText    = document.getElementById('btn-text');
+
+      statusEl.style.display  = 'block';
+      progressEl.style.display = 'flex';
+      errorEl.style.display    = 'none';
+      resultEl.style.display   = 'none';
+
+      genBtn.disabled = true;
+      btnIcon.outerHTML = '<span class="spinner"></span>';
+      document.getElementById('btn-text').textContent = 'Generating…';
+
+      startSteps();
+
+      try {
+        const body = new FormData();
+        body.append('provider', provider);
+        body.append('service',  service);
+
+        const resp = await fetch('/generate', { method: 'POST', body });
+        const data = await resp.json();
+
+        if (!resp.ok) {
+          throw new Error(data.detail || `Server error ${resp.status}`);
+        }
+
+        finishSteps();
+
+        // Build meta grid
+        const metaGrid = document.getElementById('meta-grid');
+        metaGrid.innerHTML = `
+          <span class="key">Provider</span>  <span class="val">${data.provider}</span>
+          <span class="key">Service</span>   <span class="val">${data.service}</span>
+          <span class="key">Version</span>   <span class="val">~> ${data.version}</span>
+          <span class="key">Resources</span> <span class="val">${data.resources.length}</span>
+        `;
+
+        // Download link
+        const dlBtn = document.getElementById('download-btn');
+        dlBtn.href     = data.download_url;
+        dlBtn.download = data.filename;
+        dlBtn.textContent = `⬇  Download  ${data.filename}`;
+
+        // Resource list
+        const rl = document.getElementById('resource-list');
+        rl.innerHTML = data.resources
+          .map(r => `<li>${r}</li>`)
+          .join('');
+
+        progressEl.style.display = 'none';
+        resultEl.style.display   = 'block';
+
+      } catch (err) {
+        stopSteps();
+        progressEl.style.display = 'none';
+        errorEl.style.display    = 'flex';
+        document.getElementById('error-text').textContent = err.message;
+      } finally {
+        // Restore button
+        genBtn.disabled = false;
+        const spinnerEl = genBtn.querySelector('.spinner');
+        if (spinnerEl) {
+          spinnerEl.outerHTML = '<span id="btn-icon">⚡</span>';
+        }
+        document.getElementById('btn-text').textContent = 'Generate Terraform Modules';
+      }
+    });
+  </script>
+</body>
+</html>
