@@ -32,13 +32,14 @@ this tool will:
 | Step | What happens |
 |------|-------------|
 | 1 | Query the Terraform Registry API for the **latest** provider version |
-| 2 | Spin up a throw-away workspace and run `terraform init` |
-| 3 | Execute `terraform providers schema -json` to get the full schema |
-| 4 | Filter every `aws_s3_*` resource and data-source from the schema |
-| 5 | Generate `variables.tf`, `main.tf`, `outputs.tf` per resource |
-| 6 | Scaffold `profiles/`, `test/`, `dr/` directories |
-| 7 | Write a pinned `versions.tf` and an auto-generated `README.md` |
-| 8 | Zip everything up and serve a one-click download link |
+| 2 | Check local schema cache — if hit, skip steps 3 & 4 entirely (instant) |
+| 3 | Spin up a throw-away workspace and run `terraform init` |
+| 4 | Execute `terraform providers schema -json` to get the full schema + cache it |
+| 5 | Filter every `aws_s3_*` resource and data-source from the schema |
+| 6 | Generate `variables.tf`, `main.tf`, `outputs.tf`, `terraform.tfvars.example` per resource |
+| 7 | Scaffold `profiles/dev.tfvars`, `profiles/prod.tfvars`, `test/main_test.go`, `examples/complete/`, `Makefile`, `dr/` |
+| 8 | Write a pinned `versions.tf` and an auto-generated `README.md` |
+| 9 | Zip everything up and serve a one-click download link |
 
 Everything is **deterministic** — the same provider + service + version always
 produces the same files.
@@ -125,8 +126,9 @@ Then open **http://localhost:8000** in your browser.
 
 > **Note:** The first generation for a new provider can take **30–90 seconds**
 > because Terraform must download the provider binary (~100–400 MB for large
-> providers like `aws`). Subsequent runs for the same provider are instant
-> because Terraform caches the binary in `~/.terraform.d/`.
+> providers like `aws`). Subsequent runs for the **same provider + version** are
+> **instant** — the schema is cached in `~/.terraform-generator-cache/` and
+> Terraform is not invoked again.
 
 ---
 
@@ -180,6 +182,34 @@ Interactive Swagger UI is available at **http://localhost:8000/docs**
 }
 ```
 
+### `GET /providers`
+
+Returns a curated list of popular providers — useful for frontend dropdowns.
+
+```json
+{
+  "providers": [
+    { "name": "aws",     "namespace": "hashicorp", "description": "Amazon Web Services" },
+    { "name": "azurerm", "namespace": "hashicorp", "description": "Microsoft Azure" },
+    { "name": "google",  "namespace": "hashicorp", "description": "Google Cloud Platform" }
+  ]
+}
+```
+
+### `GET /services?provider=aws`
+
+Returns all available service prefixes for a given provider.
+Uses the cached schema — near-instant on second call.
+
+```json
+{
+  "provider": "aws",
+  "version":  "5.54.1",
+  "services": ["acm", "ec2", "iam", "lambda", "rds", "s3", "..." ],
+  "count":    142
+}
+```
+
 ### `GET /download/{filename}`
 
 Streams the generated `.zip` file. Safe against path-traversal attacks.
@@ -198,20 +228,29 @@ Streams the generated `.zip` file. Safe against path-traversal attacks.
 <service>/
 ├── modules/
 │   ├── <provider>_<service>_<resource_a>/
-│   │   ├── variables.tf   ← one variable per schema attribute + block_type
-│   │   ├── main.tf        ← resource/data block wired to var.*
-│   │   └── outputs.tf     ← all computed attributes exposed as outputs
+│   │   ├── variables.tf              ← one variable per schema attribute + block_type
+│   │   ├── main.tf                   ← resource/data block wired to var.*
+│   │   ├── outputs.tf                ← all computed attributes exposed as outputs
+│   │   └── terraform.tfvars.example  ← required + optional vars with placeholders
 │   ├── <provider>_<service>_<resource_b>/
 │   │   └── ...
 │   └── ...
+├── examples/
+│   └── complete/
+│       ├── main.tf                   ← wires every module together as a working reference
+│       ├── variables.tf              ← inputs for the complete example
+│       ├── outputs.tf                ← exposes key IDs from all modules
+│       └── terraform.tfvars.example  ← copy → terraform.tfvars and fill in values
 ├── profiles/
-│   └── .gitkeep           ← scaffold: combine modules here per environment
+│   ├── dev.tfvars                    ← dev environment variable overrides
+│   └── prod.tfvars                   ← prod environment variable overrides
 ├── test/
-│   └── .gitkeep           ← scaffold: Terratest / manual tests
+│   └── main_test.go                  ← Terratest boilerplate (init+plan + per-module validate)
 ├── dr/
-│   └── .gitkeep           ← scaffold: disaster-recovery workspace
-├── versions.tf            ← pinned provider source + version constraint
-└── README.md              ← auto-generated docs for this service
+│   └── .gitkeep                      ← scaffold: disaster-recovery workspace
+├── Makefile                          ← init / validate / fmt / plan / apply / destroy / test
+├── versions.tf                       ← pinned provider source + version constraint
+└── README.md                         ← auto-generated docs for this service
 ```
 
 ### What each generated file contains
@@ -247,19 +286,27 @@ Running with `provider=aws`, `service=s3` against provider `5.x` produces:
 s3/
 ├── modules/
 │   ├── aws_s3_bucket/
-│   │   ├── variables.tf   (bucket, force_destroy, object_lock_enabled, tags, …)
+│   │   ├── variables.tf              (bucket, force_destroy, object_lock_enabled, tags, …)
 │   │   ├── main.tf
-│   │   └── outputs.tf     (id, arn, bucket_domain_name, …)
+│   │   ├── outputs.tf                (id, arn, bucket_domain_name, …)
+│   │   └── terraform.tfvars.example
 │   ├── aws_s3_bucket_acl/
-│   │   ├── variables.tf
-│   │   ├── main.tf
-│   │   └── outputs.tf
+│   │   └── ...
 │   ├── aws_s3_bucket_cors_configuration/
 │   │   └── ...
 │   └── ... (30+ resources)
-├── profiles/  .gitkeep
-├── test/      .gitkeep
+├── examples/complete/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── terraform.tfvars.example
+├── profiles/
+│   ├── dev.tfvars
+│   └── prod.tfvars
+├── test/
+│   └── main_test.go
 ├── dr/        .gitkeep
+├── Makefile
 ├── versions.tf
 └── README.md
 ```
@@ -294,7 +341,9 @@ terraform-generator/
 | Output directory | `main.py` | Change `OUTPUTS_DIR` |
 | Terraform version floor | `file_generator.py` | Edit `_render_versions_tf()` |
 | Add custom README sections | `file_generator.py` | Edit `_render_readme()` |
-| Add `.tfvars` scaffold | `file_generator.py` | Add a new `_render_tfvars()` call |
+| Schema cache location | `provider.py` | Change `_CACHE_DIR` (default: `~/.terraform-generator-cache/`) |
+| Clear schema cache | shell | `rm -rf ~/.terraform-generator-cache/` |
+| Add more popular providers | `main.py` | Edit `_POPULAR_PROVIDERS` list |
 | Cache old zips | `main.py` `/download` route | Already persisted in `outputs/` |
 
 ### Cleaning up old zips
@@ -302,6 +351,13 @@ terraform-generator/
 ```bash
 # Delete zips older than 1 day
 find outputs/ -name "*.zip" -mtime +1 -delete
+```
+
+### Clearing the schema cache
+
+```bash
+# Force re-download of provider schema on next generation
+rm -rf ~/.terraform-generator-cache/
 ```
 
 ---
