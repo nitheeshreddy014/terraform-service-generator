@@ -174,11 +174,21 @@ Interactive Swagger UI is available at **http://localhost:8000/docs**
 }
 ```
 
-**Error response `404`:**
+**Error response `404` — with smart suggestions:**
+
+If the service name is close to a valid one, the API returns a `Did you mean?` hint:
 
 ```json
 {
-  "detail": "No resources found for service 'xyz' under provider 'aws'. Available services: acm, acmpca, alexaforbusiness, ..."
+  "detail": "Service 's33' not found under provider 'aws'. Did you mean: s3, s3files?"
+}
+```
+
+If nothing close is found, it falls back to listing available services:
+
+```json
+{
+  "detail": "Service 'xyz' not found under provider 'aws'. Available services: acm, acmpca, ..."
 }
 ```
 

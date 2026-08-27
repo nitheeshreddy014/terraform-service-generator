@@ -124,12 +124,20 @@ async def generate(
         raise HTTPException(status_code=404, detail=str(exc))
 
     if not resources:
+        import difflib
         available = list_available_services(schema, provider)
-        hint = (
-            f"No resources found for service '{service}' under provider '{provider}'. "
-            f"Available services: {', '.join(available[:40])}"
-            + (" …" if len(available) > 40 else "")
-        )
+        suggestions = difflib.get_close_matches(service, available, n=5, cutoff=0.4)
+        if suggestions:
+            hint = (
+                f"Service '{service}' not found under provider '{provider}'. "
+                f"Did you mean: {', '.join(suggestions)}?"
+            )
+        else:
+            hint = (
+                f"Service '{service}' not found under provider '{provider}'. "
+                f"Available services: {', '.join(available[:40])}"
+                + (" …" if len(available) > 40 else "")
+            )
         raise HTTPException(status_code=404, detail=hint)
 
     logger.info("Found %d resource(s) for %s_%s_*", len(resources), provider, service)
