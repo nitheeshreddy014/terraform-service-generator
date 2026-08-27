@@ -59,6 +59,32 @@ def generate_service_folder(
         d.mkdir(exist_ok=True)
         (d / ".gitkeep").touch()
 
+    # profiles/dev.tfvars + prod.tfvars
+    (root / "profiles" / "dev.tfvars").write_text(
+        _render_profile_tfvars(resources, "dev"), encoding="utf-8"
+    )
+    (root / "profiles" / "prod.tfvars").write_text(
+        _render_profile_tfvars(resources, "prod"), encoding="utf-8"
+    )
+
+    # test/main_test.go
+    (root / "test" / "main_test.go").write_text(
+        _render_test_go(provider_name, service_name, resources), encoding="utf-8"
+    )
+
+    # examples/complete/
+    ex = root / "examples" / "complete"
+    ex.mkdir(parents=True, exist_ok=True)
+    (ex / "main.tf").write_text(
+        _render_example_main(provider_name, service_name, resources, provider_meta), encoding="utf-8"
+    )
+    (ex / "variables.tf").write_text(_render_example_variables(resources), encoding="utf-8")
+    (ex / "outputs.tf").write_text(_render_example_outputs(resources), encoding="utf-8")
+    (ex / "terraform.tfvars.example").write_text(_render_example_tfvars(resources), encoding="utf-8")
+
+    # Makefile
+    (root / "Makefile").write_text(_render_makefile(service_name, provider_name), encoding="utf-8")
+
     # modules/<resource>/
     modules_dir = root / "modules"
     modules_dir.mkdir(exist_ok=True)
@@ -96,6 +122,9 @@ def _write_module(modules_dir: Path, res: dict[str, Any]) -> None:
     )
     (mod_dir / "outputs.tf").write_text(
         _render_outputs(res), encoding="utf-8"
+    )
+    (mod_dir / "terraform.tfvars.example").write_text(
+        _render_tfvars_example(res), encoding="utf-8"
     )
 
 
@@ -489,3 +518,264 @@ def _default_for_type(hcl_type: str) -> str:
         return "{}"
     # object(...) / string / any / unknown → null is always safe
     return "null"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# terraform.tfvars.example  (per module)           ← NEW
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _render_tfvars_example(res: dict) -> str:
+    lines = [
+        f"# terraform.tfvars.example — {res['name']}",
+        "# Copy to terraform.tfvars and fill in values.",
+        "# Lines starting with '#' are commented-out optional variables.",
+        "",
+        "# ── Required variables (must be set) ──────────────────────────",
+    ]
+    for a, m in res["attributes"].items():
+        if not m["required"] or a == "id":
+            continue
+        lines += [f"# {m['description'] or _humanise(a)}", f'{a} = "<REQUIRED>"', ""]
+
+    opt = {k: v for k, v in res["attributes"].items()
+           if not v["required"] and not (v["computed"] and not v["optional"]) and k != "id"}
+    if opt:
+        lines.append("# ── Optional variables (uncomment to override) ────────────────")
+    for a, m in opt.items():
+        lines += [f"# {m['description'] or _humanise(a)}", f"# {a} = {_default_for_type(m['type'])}", ""]
+
+    for block_name, bmeta in res["block_types"].items():
+        nesting = bmeta["nesting_mode"]
+        inner   = bmeta["attributes"]
+        lines.append(f"# ── Block: {block_name} ──────────────────────────────────────")
+        if nesting in ("list", "set"):
+            lines += [f"# {block_name} = [", "#   {"]
+            for a in inner:
+                lines.append(f'#     {a} = "<value>"')
+            lines += ["#   },", "# ]"]
+        elif nesting == "map":
+            lines += [f'# {block_name} = {{', '#   key = {']
+            for a in inner:
+                lines.append(f'#     {a} = "<value>"')
+            lines += ["#   }", "# }"]
+        else:
+            lines.append(f"# {block_name} = {{")
+            for a in inner:
+                lines.append(f'#   {a} = "<value>"')
+            lines.append("# }")
+        lines.append("")
+    return "\n".join(lines)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# profiles/dev.tfvars  +  profiles/prod.tfvars      ← NEW
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _render_profile_tfvars(resources: list, env: str) -> str:
+    tag_val = "true" if env == "prod" else "false"
+    lines = [
+        f"# profiles/{env}.tfvars — {env.upper()} environment variable overrides",
+        f"# Usage: terraform plan -var-file=profiles/{env}.tfvars",
+        f"# Usage: make plan ENV={env}",
+        "",
+        "# ── Common tags ─────────────────────────────────────────────────",
+        f'environment                = "{env}"',
+        f"enable_deletion_protection = {tag_val}",
+        "",
+    ]
+    for res in resources:
+        req = {k: v for k, v in res["attributes"].items() if v["required"] and k != "id"}
+        if req:
+            lines.append(f"# ── {res['name']} ──────────────────────────────────────────")
+            for a, m in req.items():
+                lines += [f"# {m['description'] or _humanise(a)}", f'# {a} = "<set-for-{env}>"']
+            lines.append("")
+    return "\n".join(lines)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Makefile                                          ← NEW
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _render_makefile(service_name: str, provider_name: str) -> str:
+    return textwrap.dedent(f"""\
+        # Makefile — {provider_name}/{service_name} Terraform module
+        # Usage: make <target> [ENV=dev]
+
+        ENV        ?= dev
+        TFVARS      = profiles/$(ENV).tfvars
+        EXAMPLE_DIR = examples/complete
+        TF          = terraform
+
+        .PHONY: init validate fmt lint plan apply destroy example-plan test clean
+
+        init:
+        \t$(TF) init -backend=false
+
+        validate: init
+        \t$(TF) validate
+
+        fmt:
+        \t$(TF) fmt -recursive .
+
+        lint: fmt validate
+
+        plan: init
+        \t$(TF) plan -var-file=$(TFVARS)
+
+        apply: init
+        \t$(TF) apply -var-file=$(TFVARS)
+
+        destroy: init
+        \t$(TF) destroy -var-file=$(TFVARS)
+
+        example-plan:
+        \tcd $(EXAMPLE_DIR) && $(TF) init -backend=false && $(TF) plan -var-file=terraform.tfvars
+
+        test:
+        \tcd test && go mod init test || true && go mod tidy && go test -v -timeout 30m
+
+        clean:
+        \tfind . -type d -name ".terraform" -exec rm -rf {{}} + 2>/dev/null || true
+        \tfind . -name ".terraform.lock.hcl" -delete 2>/dev/null || true
+    """)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# examples/complete/                                ← NEW
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _render_example_main(provider_name: str, service_name: str, resources: list, provider_meta: dict) -> str:
+    ns, pt, ver = provider_meta["namespace"], provider_meta["type"], provider_meta["version"]
+    lines = [
+        f"# examples/complete/main.tf — {provider_name} {service_name} complete example",
+        "",
+        "terraform {",
+        '  required_version = ">= 1.3.0"',
+        "  required_providers {",
+        f"    {pt} = {{",
+        f'      source  = "{ns}/{pt}"',
+        f'      version = "~> {ver}"',
+        "    }",
+        "  }",
+        "}",
+        "",
+        f'provider "{pt}" {{',
+        "  region = var.region",
+        "}",
+        "",
+    ]
+    for res in resources:
+        req = {k for k, v in res["attributes"].items() if v["required"] and k != "id"}
+        lines.append(f'module "{res["name"]}" {{')
+        lines.append(f'  source = "../../modules/{res["name"]}"')
+        if req:
+            lines.append("")
+        for a in req:
+            lines.append(f"  {a} = var.{res['name']}_{a}")
+        lines += ["}", ""]
+    return "\n".join(lines)
+
+
+def _render_example_variables(resources: list) -> str:
+    lines = [
+        "# examples/complete/variables.tf",
+        "",
+        'variable "region" {',
+        "  type        = string",
+        '  description = "Cloud provider region"',
+        '  default     = "us-east-1"',
+        "}",
+        "",
+    ]
+    for res in resources:
+        for a, m in res["attributes"].items():
+            if m["required"] and a != "id":
+                lines += [
+                    f'variable "{res["name"]}_{a}" {{',
+                    f"  type        = {m['type']}",
+                    f"  description = {_quote(m['description'] or _humanise(a))}",
+                    "}", "",
+                ]
+    return "\n".join(lines)
+
+
+def _render_example_outputs(resources: list) -> str:
+    lines = ["# examples/complete/outputs.tf", ""]
+    for res in resources:
+        if "id" in res["attributes"]:
+            lines += [
+                f'output "{res["name"]}_id" {{',
+                f'  description = "ID of {res["name"]}"',
+                f'  value       = module.{res["name"]}.{res["name"]}_id',
+                "}", "",
+            ]
+    return "\n".join(lines)
+
+
+def _render_example_tfvars(resources: list) -> str:
+    lines = [
+        "# examples/complete/terraform.tfvars.example",
+        "# Copy to terraform.tfvars and fill in required values.",
+        "",
+        'region = "us-east-1"',
+        "",
+    ]
+    for res in resources:
+        req = {k: v for k, v in res["attributes"].items() if v["required"] and k != "id"}
+        if req:
+            lines.append(f"# ── {res['name']} ──────────────────────────────────────────")
+            for a, m in req.items():
+                lines += [f"# {m['description'] or _humanise(a)}", f'{res["name"]}_{a} = "<REQUIRED>"', ""]
+    return "\n".join(lines)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# test/main_test.go  — Terratest boilerplate        ← NEW
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _render_test_go(provider_name: str, service_name: str, resources: list) -> str:
+    mods = "\n".join(
+        f'\t\t"../modules/{r["name"]}",' for r in resources[:5]
+    )
+    return textwrap.dedent(f"""\
+        // test/main_test.go — Terratest for {provider_name}/{service_name}
+        // Run: cd test && go mod init test && go mod tidy && go test -v -timeout 30m
+
+        package test
+
+        import (
+        \t"testing"
+        \t"github.com/gruntwork-io/terratest/modules/terraform"
+        \t"github.com/stretchr/testify/assert"
+        )
+
+        func TestCompleteExample(t *testing.T) {{
+        \tt.Parallel()
+        \topts := &terraform.Options{{
+        \t\tTerraformDir: "../examples/complete",
+        \t\tVars: map[string]interface{{}}{{
+        \t\t\t"region": "us-east-1",
+        \t\t}},
+        \t\tNoColor: true,
+        \t}}
+        \tdefer terraform.Destroy(t, opts)
+        \tterraform.InitAndPlan(t, opts)
+        \t_ = assert.New(t)
+        }}
+
+        func TestModuleValidation(t *testing.T) {{
+        \tmodules := []string{{
+        {mods}
+        \t}}
+        \tfor _, mod := range modules {{
+        \t\tmod := mod
+        \t\tt.Run(mod, func(t *testing.T) {{
+        \t\t\tt.Parallel()
+        \t\t\topts := &terraform.Options{{TerraformDir: mod, NoColor: true}}
+        \t\t\tterraform.Init(t, opts)
+        \t\t\tterraform.Validate(t, opts)
+        \t\t}})
+        \t}}
+        }}
+    """)

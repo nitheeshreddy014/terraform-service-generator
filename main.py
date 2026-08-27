@@ -190,6 +190,50 @@ async def download(filename: str) -> FileResponse:
     )
 
 
+
+# ── Popular providers (frontend autocomplete) ────────────────────────────────
+_POPULAR_PROVIDERS = [
+    {"name": "aws",        "namespace": "hashicorp",    "description": "Amazon Web Services"},
+    {"name": "azurerm",    "namespace": "hashicorp",    "description": "Microsoft Azure"},
+    {"name": "google",     "namespace": "hashicorp",    "description": "Google Cloud Platform"},
+    {"name": "kubernetes", "namespace": "hashicorp",    "description": "Kubernetes"},
+    {"name": "helm",       "namespace": "hashicorp",    "description": "Helm charts"},
+    {"name": "vault",      "namespace": "hashicorp",    "description": "HashiCorp Vault"},
+    {"name": "datadog",    "namespace": "DataDog",      "description": "Datadog monitoring"},
+    {"name": "github",     "namespace": "integrations", "description": "GitHub"},
+    {"name": "cloudflare", "namespace": "cloudflare",   "description": "Cloudflare"},
+]
+
+
+@app.get("/providers")
+async def list_providers() -> JSONResponse:
+    """Return a curated list of popular Terraform providers for frontend autocomplete."""
+    return JSONResponse({"providers": _POPULAR_PROVIDERS})
+
+
+@app.get("/services")
+async def list_services(provider: str) -> JSONResponse:
+    """
+    Return every available service prefix for a given provider.
+    Uses the cached schema on repeated calls — near-instant second call.
+    """
+    import re as _re
+    provider = _re.sub(r"[\s_\-]+", "", provider.strip().lower())
+    if not provider:
+        raise HTTPException(status_code=422, detail="'provider' must not be empty.")
+    logger.info("list_services provider=%s", provider)
+    try:
+        schema, provider_meta = await fetch_schema(provider)
+    except (RuntimeError, ValueError) as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    services = list_available_services(schema, provider)
+    return JSONResponse({
+        "provider": provider,
+        "version":  provider_meta["version"],
+        "services": services,
+        "count":    len(services),
+    })
+
 # ---------------------------------------------------------------------------
 # Dev runner
 # ---------------------------------------------------------------------------

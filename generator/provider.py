@@ -46,6 +46,28 @@ SEARCH_URL     = f"{REGISTRY_BASE}/providers"
 # Public helpers
 # ---------------------------------------------------------------------------
 
+
+# ── Schema caching (speeds up repeated generation for same provider+version) ──
+import json as _json_cache, pathlib as _pl
+
+_CACHE_DIR = _pl.Path.home() / ".terraform-generator-cache"
+
+def _cache_key(ns, pt, ver):
+    return _CACHE_DIR / f"{ns}__{pt}__{ver}.json"
+
+def _load_cached_schema(ns, pt, ver):
+    p = _cache_key(ns, pt, ver)
+    if p.exists():
+        logger.info("Cache HIT: %s", p.name)
+        return _json_cache.loads(p.read_text(encoding="utf-8"))
+    logger.info("Cache MISS: will run terraform init+schema")
+    return None
+
+def _save_cached_schema(ns, pt, ver, schema):
+    _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    _cache_key(ns, pt, ver).write_text(_json_cache.dumps(schema), encoding="utf-8")
+    logger.info("Schema cached: %s", _cache_key(ns, pt, ver).name)
+
 async def resolve_provider(provider_name: str) -> dict[str, str]:
     """
     Returns {'namespace': '...', 'type': '...', 'version': '...'} for the
@@ -106,11 +128,16 @@ async def fetch_schema(provider_name: str) -> tuple[dict[str, Any], dict[str, st
 
     logger.info("Using provider %s/%s version %s", namespace, ptype, version)
 
+    cached = _load_cached_schema(namespace, ptype, version)
+    if cached:
+        return cached, provider_meta
+
     with tempfile.TemporaryDirectory(prefix="tfgen_") as tmpdir:
         _write_versions_tf(tmpdir, namespace, ptype, version)
         _terraform_init(tmpdir)
         schema = _terraform_schema(tmpdir)
 
+    _save_cached_schema(namespace, ptype, version, schema)
     return schema, provider_meta
 
 
