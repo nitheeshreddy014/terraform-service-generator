@@ -7,7 +7,7 @@
 FROM python:3.12-slim AS terraform-installer
 
 ARG TERRAFORM_VERSION=1.8.5
-ARG TARGETARCH=amd64
+ARG TARGETARCH
 
 RUN apt-get update && apt-get install -y --no-install-recommends wget unzip ca-certificates \
     && wget -q \

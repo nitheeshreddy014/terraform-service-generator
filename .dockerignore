@@ -1,0 +1,33 @@
+# .dockerignore — keeps build context clean
+# Only generator/, static/, main.py, and requirements.txt are COPYed in the
+# Dockerfile. Everything else is excluded to keep context transfer fast.
+
+# Generated output zips (can be large; mounted as a volume at runtime)
+outputs/
+
+# Python bytecache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Terraform local state / downloaded providers (development artefacts)
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+
+# Development and CI files not needed in the image
+docker-compose.yml
+.dockerignore
+run_tests.py
+README.md
+LICENSE
+LICENSE.txt
+patch.py
+
+# Editor and OS artefacts
+.git/
+.gitignore
+.DS_Store
+*.swp
+*.swo
