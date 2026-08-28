@@ -31,10 +31,10 @@ this tool will:
 
 | Step | What happens |
 |------|-------------|
-| 1 | Query the Terraform Registry API for the **latest** provider version |
-| 2 | Check local schema cache — if hit, skip steps 3 & 4 entirely (instant) |
-| 3 | Spin up a throw-away workspace and run `terraform init` |
-| 4 | Execute `terraform providers schema -json` to get the full schema + cache it |
+| 1 | Query the Terraform Registry API for the **latest** provider version (3-strategy semver resolution) |
+| 2 | Spin up a throw-away workspace and run `terraform init` |
+| 3 | Execute `terraform providers schema -json` — written to file (no pipe-buffer limit) |
+| 4 | Normalise service input — strip special chars, try exact / segment / prefix / fuzzy fallbacks |
 | 5 | Filter every `aws_s3_*` resource and data-source from the schema |
 | 6 | Generate `variables.tf`, `main.tf`, `outputs.tf`, `terraform.tfvars.example` per resource |
 | 7 | Scaffold `profiles/dev.tfvars`, `profiles/prod.tfvars`, `test/main_test.go`, `examples/complete/`, `Makefile`, `dr/` |
@@ -126,9 +126,9 @@ Then open **http://localhost:8000** in your browser.
 
 > **Note:** The first generation for a new provider can take **30–90 seconds**
 > because Terraform must download the provider binary (~100–400 MB for large
-> providers like `aws`). Subsequent runs for the **same provider + version** are
-> **instant** — the schema is cached in `~/.terraform-generator-cache/` and
-> Terraform is not invoked again.
+> providers like `aws`). Terraform caches provider binaries in
+> `~/.terraform.d/plugin-cache` automatically, so subsequent runs for the
+> **same provider** are significantly faster.
 
 ---
 
@@ -140,12 +140,25 @@ Then open **http://localhost:8000** in your browser.
    - `azurerm` — Microsoft Azure
    - `google` — Google Cloud Platform
    - `kubernetes`, `vault`, `datadog`, etc.
-3. Enter a **Service / Resource Prefix**:
-   - `s3`, `ec2`, `lambda`, `rds`, `iam` (AWS)
-   - `storage`, `compute`, `container` (Azure / GCP)
+3. Enter a **Service / Resource Prefix** — the tool auto-normalises your input:
+   - Special characters `()[]./` are stripped automatically
+   - Spaces and hyphens are converted to underscores
+   - Multi-word aliases resolve via segment fallback (e.g. `AMP (Managed Prometheus)` → `prometheus`)
+   - Examples: `s3`, `ec2`, `lambda`, `chaos_studio`, `bedrockagent`, `prometheus`
+   - If unsure, submit anything — the error message lists every valid service
 4. Click **Generate Terraform Modules**
 5. Watch the live progress steps
 6. Click **Download ZIP** when ready
+
+### Service naming quick reference
+
+| What you type | Resolves to | Why |
+|---|---|---|
+| `s3` | `s3` | exact match |
+| `chaos_studio` | `chaos_studio` | multi-word with underscore |
+| `Bedrock_AgentCore` | `bedrockagentcore` | stripped + concatenated |
+| `AMP (Managed Prometheus)` | `prometheus` | parens stripped, segment `prometheus` matched |
+| `BeyondCorp` | `beyondcorp` | lowercased |
 
 ---
 
@@ -189,34 +202,6 @@ If nothing close is found, it falls back to listing available services:
 ```json
 {
   "detail": "Service 'xyz' not found under provider 'aws'. Available services: acm, acmpca, ..."
-}
-```
-
-### `GET /providers`
-
-Returns a curated list of popular providers — useful for frontend dropdowns.
-
-```json
-{
-  "providers": [
-    { "name": "aws",     "namespace": "hashicorp", "description": "Amazon Web Services" },
-    { "name": "azurerm", "namespace": "hashicorp", "description": "Microsoft Azure" },
-    { "name": "google",  "namespace": "hashicorp", "description": "Google Cloud Platform" }
-  ]
-}
-```
-
-### `GET /services?provider=aws`
-
-Returns all available service prefixes for a given provider.
-Uses the cached schema — near-instant on second call.
-
-```json
-{
-  "provider": "aws",
-  "version":  "5.54.1",
-  "services": ["acm", "ec2", "iam", "lambda", "rds", "s3", "..." ],
-  "count":    142
 }
 ```
 
@@ -329,11 +314,14 @@ s3/
 terraform-generator/
 ├── main.py                  ← FastAPI app + all route handlers
 ├── requirements.txt         ← Python dependencies
+├── run_tests.py             ← Cross-CSP integration test suite (16 tests)
+├── Dockerfile               ← Multi-stage build with pinned Terraform binary
+├── docker-compose.yml       ← One-command start with provider cache volume
 ├── generator/
 │   ├── __init__.py
-│   ├── provider.py          ← Registry API lookup + terraform init/schema
+│   ├── provider.py          ← Registry API lookup + terraform init/schema (file-based)
 │   ├── schema_parser.py     ← Schema JSON → structured Python dicts
-│   ├── file_generator.py    ← Dicts → .tf file content + folder tree
+│   ├── file_generator.py    ← Dicts → .tf file content + full folder tree
 │   └── zipper.py            ← Folder → .zip archive
 ├── static/
 │   └── index.html           ← Single-page frontend (no framework)
@@ -351,9 +339,7 @@ terraform-generator/
 | Output directory | `main.py` | Change `OUTPUTS_DIR` |
 | Terraform version floor | `file_generator.py` | Edit `_render_versions_tf()` |
 | Add custom README sections | `file_generator.py` | Edit `_render_readme()` |
-| Schema cache location | `provider.py` | Change `_CACHE_DIR` (default: `~/.terraform-generator-cache/`) |
-| Clear schema cache | shell | `rm -rf ~/.terraform-generator-cache/` |
-| Add more popular providers | `main.py` | Edit `_POPULAR_PROVIDERS` list |
+| Provider binary cache | Terraform | Stored in `~/.terraform.d/plugin-cache` automatically |
 | Cache old zips | `main.py` `/download` route | Already persisted in `outputs/` |
 
 ### Cleaning up old zips

@@ -243,8 +243,10 @@ def _terraform_init(directory: str) -> None:
     result = subprocess.run(
         cmd,
         cwd=directory,
-        capture_output=True,
-        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding="utf-8",
+        errors="replace",
     )
     if result.returncode != 0:
         raise RuntimeError(
@@ -254,21 +256,47 @@ def _terraform_init(directory: str) -> None:
 
 
 def _terraform_schema(directory: str) -> dict[str, Any]:
-    """Run `terraform providers schema -json` and return the parsed dict."""
-    cmd = [_terraform_exe(), "providers", "schema", "-json"]
-    result = subprocess.run(
-        cmd,
-        cwd=directory,
-        capture_output=True,
-        text=True,
-    )
+    """
+    Run `terraform providers schema -json` and write output directly to a
+    file instead of capturing via a pipe.
+
+    WHY FILE-BASED:
+    Large providers (google, azurerm) produce 50-200 MB of JSON.
+    On Windows, subprocess pipe buffers overflow for large outputs,
+    causing result.stdout to be None or truncated, which produces:
+      'JSON object must be str, bytes or bytearray, not NoneType'
+    Writing stdout directly to a file bypasses all pipe-buffer limits
+    and works identically for every CSP / provider size.
+    """
+    schema_file = Path(directory) / "schema.json"
+    cmd          = [_terraform_exe(), "providers", "schema", "-json"]
+
+    with open(schema_file, "w", encoding="utf-8", errors="replace") as out_fh:
+        result = subprocess.run(
+            cmd,
+            cwd=directory,
+            stdout=out_fh,          # stream directly to disk — no pipe limit
+            stderr=subprocess.PIPE,
+            encoding="utf-8",
+            errors="replace",
+        )
+
     if result.returncode != 0:
         raise RuntimeError(
-            f"terraform providers schema failed:\n{result.stdout}\n{result.stderr}"
+            f"terraform providers schema failed (exit {result.returncode}):\n"
+            f"{result.stderr}"
         )
+
+    raw = schema_file.read_text(encoding="utf-8", errors="replace").strip()
+    if not raw:
+        raise RuntimeError(
+            "terraform providers schema returned empty output. "
+            "Ensure terraform init completed successfully."
+        )
+
     try:
-        return json.loads(result.stdout)
-    except json.JSONDecodeError as exc:
+        return json.loads(raw)
+    except (json.JSONDecodeError, TypeError, ValueError) as exc:
         raise RuntimeError(f"Could not parse schema JSON: {exc}") from exc
 
 

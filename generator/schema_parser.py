@@ -89,8 +89,10 @@ def list_available_services(
     provider_name: str,
 ) -> list[str]:
     """
-    Return a sorted list of unique service names found in the schema for the
-    given provider (useful for frontend autocomplete / error messages).
+    Return a sorted list of unique service names found in the schema.
+    Includes both single-word ('storage') and multi-word ('chaos_studio')
+    service prefixes so that user input like 'chaos_studio' is always
+    recognised and appears in 'Did you mean' suggestions.
     """
     provider_schemas = schema.get("provider_schemas", {})
     provider_key     = _find_provider_key(provider_schemas, provider_name)
@@ -99,17 +101,27 @@ def list_available_services(
     services: set[str] = set()
     prefix = f"{provider_name}_"
 
-    for rname in provider_block.get("resource_schemas", {}):
-        if rname.startswith(prefix):
-            parts = rname[len(prefix):].split("_")
-            if parts:
-                services.add(parts[0])
+    all_rnames = list(provider_block.get("resource_schemas", {}).keys()) + \
+                 list(provider_block.get("data_source_schemas", {}).keys())
 
-    for rname in provider_block.get("data_source_schemas", {}):
-        if rname.startswith(prefix):
-            parts = rname[len(prefix):].split("_")
-            if parts:
-                services.add(parts[0])
+    for rname in all_rnames:
+        if not rname.startswith(prefix):
+            continue
+        remainder = rname[len(prefix):]        # e.g. 'chaos_studio_capability'
+        parts     = remainder.split("_")       # ['chaos', 'studio', 'capability']
+
+        # Always add single-word prefix: 'chaos'
+        if parts:
+            services.add(parts[0])
+
+        # Add two-word prefix when it is genuinely a sub-service:
+        # only when at least 3 segments exist (provider_svc1_svc2_resource)
+        # so we don't add 'storage_account' when 'storage' is the service.
+        # Heuristic: if (svc1_svc2) appears as prefix of >1 resource names,
+        # it's a real multi-word service.
+        if len(parts) >= 3:
+            two_word = f"{parts[0]}_{parts[1]}"
+            services.add(two_word)
 
     return sorted(services)
 

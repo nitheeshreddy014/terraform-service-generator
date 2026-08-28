@@ -86,12 +86,34 @@ async def generate(
       5. Zip it up.
       6. Return a JSON body with a download URL.
     """
-    # Normalise both inputs: lowercase, strip whitespace, remove separators.
-    # This means 'Bedrock_AgentCore', 'bedrock-agentcore', 'Bedrock AgentCore'
-    # all resolve correctly to 'bedrockagentcore'.
     import re
-    provider = re.sub(r'[\s_\-]+', '', provider.strip().lower())
-    service  = re.sub(r'[\s_\-]+', '', service.strip().lower())
+
+    # --- Provider normalisation -------------------------------------------
+    # Provider names are always single words (aws, azurerm, google).
+    # Strip everything that is not a letter or digit.
+    provider = re.sub(r'[^a-z0-9]', '', provider.strip().lower())
+
+    # --- Service normalisation --------------------------------------------
+    # Users may type product names, aliases, or free text, e.g.:
+    #   'AMP (Managed Prometheus)'  ->  'amp_managed_prometheus'
+    #   'chaos_studio'              ->  'chaos_studio'
+    #   'Bedrock_AgentCore'         ->  'bedrock_agentcore'
+    #
+    # Pipeline (in order):
+    #  1. lowercase
+    #  2. replace every non-alphanumeric char (parens, dots, slashes…) with a space
+    #  3. collapse runs of spaces / underscores / hyphens into a single '_'
+    #  4. strip leading / trailing underscores
+    #
+    # This gives a clean 'snake_case' base from ANY user input.
+    s = service.strip().lower()
+    s = re.sub(r'[^a-z0-9\s_\-]', ' ', s)   # '(' ')' '/' '.' etc. → space
+    s = re.sub(r'[\s_\-]+', '_', s).strip('_')  # collapse separators
+
+    service_raw      = s                              # e.g. 'amp_managed_prometheus'
+    service_stripped = service_raw.replace('_', '')   # e.g. 'ampmanagedprometheus'
+    service_segments = [seg for seg in service_raw.split('_') if seg]  # ['amp','managed','prometheus']
+    service          = service_raw                    # first attempt uses full cleaned string
 
     if not provider:
         raise HTTPException(status_code=422, detail="'provider' must not be empty.")
@@ -126,19 +148,90 @@ async def generate(
     if not resources:
         import difflib
         available = list_available_services(schema, provider)
-        suggestions = difflib.get_close_matches(service, available, n=5, cutoff=0.4)
-        if suggestions:
-            hint = (
-                f"Service '{service}' not found under provider '{provider}'. "
-                f"Did you mean: {', '.join(suggestions)}?"
-            )
-        else:
-            hint = (
-                f"Service '{service}' not found under provider '{provider}'. "
-                f"Available services: {', '.join(available[:40])}"
-                + (" …" if len(available) > 40 else "")
-            )
-        raise HTTPException(status_code=404, detail=hint)
+
+        # Fallback 1: try fully-stripped form (e.g. chaosstudio -> still nothing,
+        # but Bedrock_AgentCore -> bedrockagentcore -> matches)
+        if service_stripped != service:
+            try:
+                alt = extract_service_resources(schema, provider, service_stripped)
+                if alt:
+                    service   = service_stripped
+                    resources = alt
+                    logger.info("Stripped fallback '%s' matched %d resource(s)", service, len(alt))
+            except Exception:
+                pass
+
+        # Fallback 2: try each clean word segment individually
+        # e.g. 'amp_managed_prometheus' -> try 'amp', 'managed', 'prometheus'
+        # 'prometheus' matches aws_prometheus_* -> success
+        if not resources:
+            for seg in service_segments:
+                if seg and seg not in (service, service_stripped):
+                    try:
+                        alt = extract_service_resources(schema, provider, seg)
+                        if alt:
+                            service   = seg
+                            resources = alt
+                            logger.info("Segment fallback '%s' matched %d resource(s)", seg, len(alt))
+                            break
+                    except Exception:
+                        pass
+
+        # Fallback 3: also try two-word combos from segments
+        # e.g. segments ['managed', 'prometheus'] -> try 'managed_prometheus'
+        if not resources and len(service_segments) >= 2:
+            for i in range(len(service_segments) - 1):
+                combo = f"{service_segments[i]}_{service_segments[i+1]}"
+                if combo not in (service, service_stripped):
+                    try:
+                        alt = extract_service_resources(schema, provider, combo)
+                        if alt:
+                            service   = combo
+                            resources = alt
+                            logger.info("Combo fallback '%s' matched %d resource(s)", combo, len(alt))
+                            break
+                    except Exception:
+                        pass
+
+        # Fallback 4: longest available service that stripped input starts with
+        # e.g. 'chaosstudio' starts with 'chaos'
+        if not resources:
+            for svc in sorted(available, key=len, reverse=True):
+                svc_stripped = svc.replace('_', '')
+                if service_stripped.startswith(svc_stripped) or svc_stripped.startswith(service_stripped):
+                    try:
+                        alt = extract_service_resources(schema, provider, svc)
+                        if alt:
+                            service   = svc
+                            resources = alt
+                            logger.info("Prefix fallback '%s' matched %d resource(s)", svc, len(alt))
+                            break
+                    except Exception:
+                        pass
+
+        # Still nothing -> fuzzy 'Did you mean' error
+        if not resources:
+            # fuzzy match against all segments plus the full string
+            all_attempts = [service_stripped] + service_segments
+            candidates  = []
+            for attempt in all_attempts:
+                candidates += difflib.get_close_matches(attempt, available, n=4, cutoff=0.4)
+            prefix_hits = [s for s in available if any(
+                s.replace('_','').startswith(seg[:4]) for seg in service_segments
+            )][:4]
+            suggestions = list(dict.fromkeys(candidates + prefix_hits))[:6]
+            if suggestions:
+                hint = (
+                    f"Service '{service_raw}' not found under provider '{provider}'. "
+                    f"Did you mean: {', '.join(suggestions)}?"
+                )
+            else:
+                hint = (
+                    f"Service '{service_raw}' not found under provider '{provider}'. "
+                    f"Available services: {', '.join(available[:50])}"
+                    + (" ..." if len(available) > 50 else "")
+                )
+            raise HTTPException(status_code=404, detail=hint)
 
     logger.info("Found %d resource(s) for %s_%s_*", len(resources), provider, service)
 
