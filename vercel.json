@@ -5,11 +5,7 @@
   "functions": {
     "main.py": {
       "maxDuration": 300,
-      "includeFiles": [
-        "terraform",
-        "generator/**",
-        "static/**"
-      ]
+      "includeFiles": "{terraform,generator/**,static/**}"
     }
   }
 }
