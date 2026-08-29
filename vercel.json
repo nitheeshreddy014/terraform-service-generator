@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "buildCommand": "curl -fsSL -o terraform.zip https://releases.hashicorp.com/terraform/1.8.5/terraform_1.8.5_linux_amd64.zip && unzip -o terraform.zip && rm terraform.zip && chmod +x terraform",
+  "functions": {
+    "main.py": {
+      "maxDuration": 300,
+      "includeFiles": [
+        "terraform",
+        "generator/**",
+        "static/**"
+      ]
+    }
+  }
+}

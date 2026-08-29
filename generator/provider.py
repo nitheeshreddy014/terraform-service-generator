@@ -50,7 +50,12 @@ SEARCH_URL     = f"{REGISTRY_BASE}/providers"
 # ── Schema caching (speeds up repeated generation for same provider+version) ──
 import json as _json_cache, pathlib as _pl
 
-_CACHE_DIR = _pl.Path.home() / ".terraform-generator-cache"
+# On Vercel the home directory (/root) is read-only; only /tmp is writable.
+_CACHE_DIR = (
+    _pl.Path("/tmp/.terraform-generator-cache")
+    if os.environ.get("VERCEL") == "1"
+    else _pl.Path.home() / ".terraform-generator-cache"
+)
 
 def _cache_key(ns, pt, ver):
     return _CACHE_DIR / f"{ns}__{pt}__{ver}.json"

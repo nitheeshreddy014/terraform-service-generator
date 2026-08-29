@@ -49,8 +49,16 @@ app = FastAPI(
 )
 
 BASE_DIR    = Path(__file__).parent
-OUTPUTS_DIR = BASE_DIR / "outputs"
-OUTPUTS_DIR.mkdir(exist_ok=True)
+
+# On Vercel the task directory (/var/task) is read-only at runtime;
+# only /tmp is writable. Locally the outputs/ sibling folder is used.
+import os as _os
+OUTPUTS_DIR = (
+    Path("/tmp/tfgen-outputs")
+    if _os.environ.get("VERCEL") == "1"
+    else BASE_DIR / "outputs"
+)
+OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Serve static files (index.html, any CSS/JS you add later)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
