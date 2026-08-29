@@ -321,11 +321,21 @@ def _terraform_exe() -> str | None:
     Priority:
       1. terraform.exe / terraform sitting next to main.py  (bundled)
       2. Anywhere on PATH
+
+    On Linux / macOS the .exe candidate is skipped entirely so that a
+    Windows PE binary accidentally present in the project directory is
+    never picked up and passed to execve (which would raise Errno 8,
+    Exec format error).
     """
+    import sys as _sys
+
     # Directory that contains main.py (project root)
     project_root = Path(__file__).parent.parent
 
-    for candidate in ("terraform.exe", "terraform"):
+    # On Windows check .exe first; on Linux/macOS only the bare binary name.
+    candidates = ("terraform.exe", "terraform") if _sys.platform == "win32" else ("terraform",)
+
+    for candidate in candidates:
         local = project_root / candidate
         if local.exists():
             return str(local)

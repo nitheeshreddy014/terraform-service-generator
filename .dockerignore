@@ -10,11 +10,13 @@ __pycache__/
 *.py[cod]
 *.pyo
 
-# Terraform local state / downloaded providers (development artefacts)
+# Terraform local state / downloaded providers / local binaries (dev artefacts)
 .terraform/
 .terraform.lock.hcl
 *.tfstate
 *.tfstate.backup
+terraform
+terraform.exe
 
 # Development and CI files not needed in the image
 docker-compose.yml
