@@ -550,8 +550,8 @@
           progressEl.style.display = 'none';
           resultEl.style.display   = 'block';
 
-        } else {
-          // --- Local / Docker JSON path (unchanged) ---
+        } else if (contentType.includes('application/json')) {
+          // --- Local / Docker JSON path ---
           const data = await resp.json();
           if (!resp.ok) {
             throw new Error(data.detail || `Server error ${resp.status}`);
@@ -577,6 +577,17 @@
 
           progressEl.style.display = 'none';
           resultEl.style.display   = 'block';
+
+        } else {
+          // --- Unexpected response (HTML error page from CDN / proxy) ---
+          let hint = `Server returned HTTP ${resp.status}`;
+          try {
+            const raw = await resp.text();
+            // Strip HTML tags for a cleaner message
+            const stripped = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            if (stripped) hint += ': ' + stripped.slice(0, 200);
+          } catch (_) { /* ignore secondary read error */ }
+          throw new Error(hint);
         }
 
       } catch (err) {

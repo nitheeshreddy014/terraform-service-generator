@@ -4,7 +4,7 @@
   "functions": {
     "main.py": {
       "maxDuration": 60,
-      "includeFiles": "generated-schemas/manifest.json,generated-schemas/**/*.json.gz,generator/**,static/**"
+      "includeFiles": "{generated-schemas/manifest.json,generated-schemas/**/*.json.gz,generator/**,static/**}"
     }
   }
 }
