@@ -10,7 +10,10 @@ dist/
 build/
 .eggs/
 
-# Terraform
+# Terraform binaries & working dirs (never commit these)
+terraform
+terraform.exe
+terraform.zip
 **/.terraform/
 **/.terraform.lock.hcl
 *.tfstate
@@ -21,8 +24,23 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-# App outputs (generated zips)
-outputs/*.zip
+# Provider binaries
+*.zip.download
+/providers-cache/
+
+# Staging / temp dirs created by CI and generate_schemas.py
+generated-schemas-staging/
+generated-schemas-backup/
+generated-schemas-tmp*/
+/tmp/
+
+# Raw (uncompressed) provider schema JSON dumps — not deployment inputs
+# (The compressed .json.gz files in generated-schemas/ ARE tracked by Git
+#  because Vercel needs them at runtime.  Do NOT add generated-schemas/ here.)
+*.schema.json
+
+# App outputs (generated zips — ephemeral, not committed)
+outputs/
 
 # IDE / OS
 .idea/
@@ -31,9 +49,9 @@ outputs/*.zip
 *.swo
 .DS_Store
 Thumbs.db
+_status.txt
+patch2.py
 
 # Logs
 *.log
 uvicorn.log
-terraform.exe  
-patch2.py  

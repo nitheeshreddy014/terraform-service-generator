@@ -1,0 +1,147 @@
+name: Update Provider Schemas
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Triggers
+# ──────────────────────────────────────────────────────────────────────────────
+on:
+  schedule:
+    - cron: "0 3 * * 1"   # Every Monday at 03:00 UTC
+  workflow_dispatch:        # Allow manual runs from the Actions tab
+
+# ──────────────────────────────────────────────────────────────────────────────
+# One concurrent run at a time; never cancel an in-progress generation.
+# ──────────────────────────────────────────────────────────────────────────────
+concurrency:
+  group: update-provider-schemas
+  cancel-in-progress: false
+
+jobs:
+  generate-schemas:
+    name: Generate & validate provider schemas
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # needed for git push
+
+    env:
+      STAGING_DIR: generated-schemas-staging
+      BACKUP_DIR:  generated-schemas-backup
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          # Use the default GITHUB_TOKEN; commits tagged [skip ci] avoid loops.
+
+      # ── 2. Python ────────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # ── 3. Terraform ─────────────────────────────────────────────────────
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.8.5"
+          terraform_wrapper: false
+
+      # ── 4. Backup existing schemas ────────────────────────────────────────
+      - name: Backup current generated-schemas
+        run: |
+          if [ -d generated-schemas ]; then
+            cp -r generated-schemas "$BACKUP_DIR"
+            echo "Backup created at $BACKUP_DIR"
+          else
+            echo "No existing generated-schemas to back up"
+          fi
+
+      # ── 5. Generate into staging ──────────────────────────────────────────
+      - name: Generate AWS schemas
+        id: gen_aws
+        run: |
+          python scripts/generate_schemas.py \
+            --providers aws \
+            --output-dir "$STAGING_DIR"
+
+      - name: Generate AzureRM schemas
+        id: gen_azurerm
+        run: |
+          python scripts/generate_schemas.py \
+            --providers azurerm \
+            --output-dir "$STAGING_DIR"
+
+      - name: Generate Google schemas
+        id: gen_google
+        run: |
+          python scripts/generate_schemas.py \
+            --providers google \
+            --output-dir "$STAGING_DIR"
+
+      # ── 6. Validate staging schemas ───────────────────────────────────────
+      - name: Validate all staging schema files
+        run: |
+          python scripts/validate_schemas.py \
+            --schemas-dir "$STAGING_DIR"
+
+      # ── 7. Atomic replacement ─────────────────────────────────────────────
+      - name: Replace generated-schemas with validated staging data
+        run: |
+          rm -rf generated-schemas
+          mv "$STAGING_DIR" generated-schemas
+          echo "generated-schemas replaced successfully"
+
+      # ── 8. Detect changes ────────────────────────────────────────────────
+      - name: Check whether schemas actually changed
+        id: diff
+        run: |
+          git add generated-schemas/
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No schema changes detected; nothing to commit."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            ADDED=$(git diff --cached --numstat | awk '{a+=$1} END{print a}')
+            REMOVED=$(git diff --cached --numstat | awk '{d+=$2} END{print d}')
+            echo "Lines added: $ADDED  removed: $REMOVED"
+          fi
+
+      # ── 9. Commit & push ─────────────────────────────────────────────────
+      - name: Commit and push updated schemas
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update pre-generated provider schemas [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 10. Cleanup ───────────────────────────────────────────────────────
+      - name: Remove staging and backup directories
+        if: always()
+        run: |
+          rm -rf "$STAGING_DIR" "$BACKUP_DIR"
+          # Remove any Terraform working directories that may have been created
+          find . -name ".terraform"    -type d -prune -exec rm -rf {} + 2>/dev/null || true
+          find . -name "*.tfstate"     -type f        -exec rm -f  {} + 2>/dev/null || true
+          find . -name "*.tfstate.backup" -type f     -exec rm -f  {} + 2>/dev/null || true
+          echo "Cleanup complete"
+
+      # ── 11. Restore backup on failure ────────────────────────────────────
+      - name: Restore backup if generation or validation failed
+        if: failure()
+        run: |
+          if [ -d "$BACKUP_DIR" ]; then
+            rm -rf generated-schemas
+            mv "$BACKUP_DIR" generated-schemas
+            echo "Previous generated-schemas restored from backup"
+          fi
+          echo "Workflow FAILED; previous schemas preserved."
+          exit 1

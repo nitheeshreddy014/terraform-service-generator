@@ -3,12 +3,26 @@ main.py
 -------
 FastAPI application entry point.
 
+Runtime modes
+-------------
+VERCEL=1  (env var set by Vercel at build/runtime)
+  * /providers  -> reads manifest.json (no Terraform)
+  * /services   -> reads manifest.json (no Terraform)
+  * /generate   -> loads pre-generated .json.gz, returns ZIP directly
+  * /download   -> disabled (ZIP is returned inline from /generate)
+
+Local / Docker (VERCEL not set or not "1")
+  * All existing Terraform-based behaviour is preserved unchanged.
+  * /download endpoint remains active.
+
 Endpoints
 ---------
-GET  /                  → serves the HTML frontend (static/index.html)
-POST /generate          → runs the full pipeline and returns a download URL
-GET  /download/{fname}  → streams the generated .zip file
-GET  /health            → simple liveness check
+GET  /                  -> serves the HTML frontend
+POST /generate          -> generation pipeline
+GET  /download/{fname}  -> streams generated zip (local/Docker only)
+GET  /health            -> liveness check
+GET  /providers         -> list available providers
+GET  /services          -> list services for a provider
 """
 
 from __future__ import annotations
@@ -19,7 +33,7 @@ import traceback
 from pathlib import Path
 
 from fastapi import FastAPI, Form, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from generator.file_generator import generate_service_folder
@@ -53,12 +67,24 @@ BASE_DIR    = Path(__file__).parent
 # On Vercel the task directory (/var/task) is read-only at runtime;
 # only /tmp is writable. Locally the outputs/ sibling folder is used.
 import os as _os
+
+# ---------------------------------------------------------------------------
+# Runtime mode
+# ---------------------------------------------------------------------------
+VERCEL = _os.environ.get("VERCEL") == "1"
+
 OUTPUTS_DIR = (
     Path("/tmp/tfgen-outputs")
-    if _os.environ.get("VERCEL") == "1"
+    if VERCEL
     else BASE_DIR / "outputs"
 )
 OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+
+if VERCEL:
+    logger.info("Runtime mode: VERCEL (pre-generated schemas)")
+    from generator import schema_store
+else:
+    logger.info("Runtime mode: LOCAL/DOCKER (Terraform-based)")
 
 # Serve static files (index.html, any CSS/JS you add later)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
@@ -77,14 +103,15 @@ async def index() -> HTMLResponse:
 
 @app.get("/health")
 async def health() -> JSONResponse:
-    return JSONResponse({"status": "ok"})
+    """Liveness probe — also reports runtime mode."""
+    return JSONResponse({"status": "ok", "mode": "vercel" if VERCEL else "local"})
 
 
 @app.post("/generate")
 async def generate(
     provider: str = Form(..., description="Cloud provider name, e.g. aws, azurerm, google"),
     service:  str = Form(..., description="Service / resource prefix, e.g. s3, ec2, storage"),
-) -> JSONResponse:
+):
     """
     Full generation pipeline:
       1. Resolve provider → fetch latest version from Terraform Registry.
@@ -128,7 +155,72 @@ async def generate(
     if not service:
         raise HTTPException(status_code=422, detail="'service' must not be empty.")
 
-    logger.info("▶  generate  provider=%s  service=%s", provider, service)
+    logger.info("generate  provider=%s  service=%s  mode=%s",
+                provider, service, "vercel" if VERCEL else "local")
+
+    # ══════════════════════════════════════════════════════════════════
+    # VERCEL MODE — load pre-generated schema, return ZIP directly
+    # ══════════════════════════════════════════════════════════════════
+    if VERCEL:
+        try:
+            schema, provider_meta = schema_store.load_service_schema(provider, service)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except RuntimeError as exc:
+            raise HTTPException(status_code=500, detail=str(exc))
+
+        try:
+            resources = extract_service_resources(schema, provider, service)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+
+        if not resources:
+            try:
+                avail = schema_store.list_services(provider)
+            except Exception:
+                avail = []
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    f"Service '{service}' found in manifest but produced 0 resources. "
+                    f"Available: {', '.join(avail[:30])}"
+                    + (" ..." if len(avail) > 30 else "")
+                ),
+            )
+
+        try:
+            with tempfile.TemporaryDirectory(prefix="tfgen_vercel_") as _td:
+                _svc_root = generate_service_folder(
+                    base_dir=_td,
+                    provider_name=provider,
+                    service_name=service,
+                    resources=resources,
+                    provider_meta=provider_meta,
+                )
+                _zip = zip_service_folder(_svc_root, Path(_td))
+                _zip_bytes = _zip.read_bytes()
+        except Exception as exc:
+            logger.error("Vercel generation failed:\n%s", traceback.format_exc())
+            raise HTTPException(status_code=500, detail=f"Generation error: {exc}")
+
+        _fname = f"{provider}_{service}_terraform.zip"
+        logger.info("Vercel ZIP ready: %s (%d bytes)", _fname, len(_zip_bytes))
+        return Response(
+            content=_zip_bytes,
+            media_type="application/zip",
+            headers={
+                "Content-Disposition":   f'attachment; filename="{_fname}"',
+                "X-Provider":            provider,
+                "X-Service":             service,
+                "X-Provider-Version":    provider_meta.get("version", ""),
+                "X-Schema-Generated-At": provider_meta.get("generated_at", ""),
+            },
+        )
+    # ══════════════════════════════════════════════════════════════════
+    # LOCAL / DOCKER MODE — full Terraform pipeline (unchanged)
+    # ══════════════════════════════════════════════════════════════════
 
     # ------------------------------------------------------------------
     # Step 1 + 2 — fetch schema (runs terraform under the hood)
@@ -282,21 +374,22 @@ async def generate(
 
 
 @app.get("/download/{filename}")
-async def download(filename: str) -> FileResponse:
-    """Stream a previously generated zip file to the browser."""
-    # Sanitise: no path traversal
+async def download(filename: str):
+    """Stream a previously generated zip file (local/Docker only)."""
+    if VERCEL:
+        raise HTTPException(
+            status_code=410,
+            detail=(
+                "The /download endpoint is not available on Vercel. "
+                "The ZIP is returned directly from POST /generate."
+            ),
+        )
     if "/" in filename or "\\" in filename or ".." in filename:
         raise HTTPException(status_code=400, detail="Invalid filename.")
-
     zip_path = OUTPUTS_DIR / filename
     if not zip_path.exists():
         raise HTTPException(status_code=404, detail="File not found. Please regenerate.")
-
-    return FileResponse(
-        path=zip_path,
-        media_type="application/zip",
-        filename=filename,
-    )
+    return FileResponse(path=zip_path, media_type="application/zip", filename=filename)
 
 
 
@@ -316,7 +409,14 @@ _POPULAR_PROVIDERS = [
 
 @app.get("/providers")
 async def list_providers() -> JSONResponse:
-    """Return a curated list of popular Terraform providers for frontend autocomplete."""
+    """Return available providers. Vercel: from manifest.json. Local: static list."""
+    if VERCEL:
+        try:
+            providers = schema_store.list_providers()
+        except Exception as exc:
+            logger.error("schema_store.list_providers failed: %s", exc)
+            raise HTTPException(status_code=500, detail=str(exc))
+        return JSONResponse({"providers": providers})
     return JSONResponse({"providers": _POPULAR_PROVIDERS})
 
 
@@ -324,13 +424,29 @@ async def list_providers() -> JSONResponse:
 async def list_services(provider: str) -> JSONResponse:
     """
     Return every available service prefix for a given provider.
-    Uses the cached schema on repeated calls — near-instant second call.
+    Vercel: reads manifest.json. Local/Docker: calls fetch_schema().
     """
     import re as _re
     provider = _re.sub(r"[\s_\-]+", "", provider.strip().lower())
     if not provider:
         raise HTTPException(status_code=422, detail="'provider' must not be empty.")
-    logger.info("list_services provider=%s", provider)
+    logger.info("list_services provider=%s mode=%s", provider, "vercel" if VERCEL else "local")
+
+    if VERCEL:
+        try:
+            services = schema_store.list_services(provider)
+            meta     = schema_store.get_provider_metadata(provider)
+        except ValueError as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc))
+        return JSONResponse({
+            "provider": provider,
+            "version":  meta["version"],
+            "services": services,
+            "count":    len(services),
+        })
+
     try:
         schema, provider_meta = await fetch_schema(provider)
     except (RuntimeError, ValueError) as exc:
