@@ -13,6 +13,10 @@ on:
   # Allow manual trigger from GitHub Actions UI
   workflow_dispatch:
 
+# Grant the workflow permission to commit and push schema updates back to the repo
+permissions:
+  contents: write
+
 jobs:
   update-schemas:
     runs-on: ubuntu-latest
