@@ -1,8 +1,15 @@
-# .dockerignore — keeps build context clean
-# Only generator/, static/, main.py, and requirements.txt are COPYed in the
-# Dockerfile. Everything else is excluded to keep context transfer fast.
+# .dockerignore
+# Docker/local mode uses Terraform directly; pre-generated schemas are not
+# needed in the image, so generated-schemas/ is excluded here to keep the
+# build context lean.  It remains tracked by Git for Vercel.
 
-# Generated output zips (can be large; mounted as a volume at runtime)
+# Pre-generated schemas (Vercel only; Docker uses Terraform directly)
+generated-schemas/
+generated-schemas-staging/
+generated-schemas-backup/
+generated-schemas-tmp*/
+
+# Generated output zips (mounted as a volume at runtime)
 outputs/
 
 # Python bytecache
@@ -10,15 +17,19 @@ __pycache__/
 *.py[cod]
 *.pyo
 
-# Terraform local state / downloaded providers / local binaries (dev artefacts)
+# Terraform local state / downloaded providers / local binaries
 .terraform/
 .terraform.lock.hcl
 *.tfstate
 *.tfstate.backup
+*.tfplan
 terraform
 terraform.exe
+terraform.zip
+*.zip.download
+/providers-cache/
 
-# Development and CI files not needed in the image
+# Development / CI files not needed in the image
 docker-compose.yml
 .dockerignore
 run_tests.py
@@ -26,6 +37,10 @@ README.md
 LICENSE
 LICENSE.txt
 patch.py
+_status.txt
+scripts/
+tests/
+.github/
 
 # Editor and OS artefacts
 .git/
@@ -33,3 +48,4 @@ patch.py
 .DS_Store
 *.swp
 *.swo
+*.log

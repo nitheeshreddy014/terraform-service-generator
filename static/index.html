@@ -509,37 +509,86 @@
         body.append('service',  service);
 
         const resp = await fetch('/generate', { method: 'POST', body });
-        const data = await resp.json();
+        const contentType = resp.headers.get('content-type') || '';
 
-        if (!resp.ok) {
-          throw new Error(data.detail || `Server error ${resp.status}`);
+        // ----------------------------------------------------------------
+        // Vercel mode: /generate returns the ZIP bytes directly
+        // Local mode:  /generate returns JSON { download_url, ... }
+        // ----------------------------------------------------------------
+        if (contentType.includes('application/zip')) {
+          // --- Vercel direct-ZIP path ---
+          if (!resp.ok) {
+            throw new Error(`Server error ${resp.status}`);
+          }
+          const blob       = await resp.blob();
+          const cdHeader   = resp.headers.get('content-disposition') || '';
+          const fnMatch    = cdHeader.match(/filename="?([^"]+)"?/);
+          const filename   = fnMatch ? fnMatch[1] : `${provider}_${service}_terraform.zip`;
+          const blobUrl    = URL.createObjectURL(blob);
+          const version    = resp.headers.get('x-provider-version') || 'latest';
+          const genAt      = resp.headers.get('x-schema-generated-at') || '';
+
+          finishSteps();
+
+          const metaGrid = document.getElementById('meta-grid');
+          metaGrid.innerHTML = `
+            <span class="key">Provider</span>  <span class="val">${provider}</span>
+            <span class="key">Service</span>   <span class="val">${service}</span>
+            <span class="key">Version</span>   <span class="val">~> ${version}</span>
+            <span class="key">Schema</span>    <span class="val">${genAt ? genAt.slice(0,10) : 'pre-generated'}</span>
+          `;
+
+          const dlBtn = document.getElementById('download-btn');
+          dlBtn.href      = blobUrl;
+          dlBtn.download  = filename;
+          dlBtn.textContent = `\u2b07  Download  ${filename}`;
+          dlBtn.onclick = () => setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+
+          document.getElementById('resource-list').innerHTML =
+            '<li>ZIP downloaded directly from pre-generated schema.</li>';
+
+          progressEl.style.display = 'none';
+          resultEl.style.display   = 'block';
+
+        } else if (contentType.includes('application/json')) {
+          // --- Local / Docker JSON path ---
+          const data = await resp.json();
+          if (!resp.ok) {
+            throw new Error(data.detail || `Server error ${resp.status}`);
+          }
+
+          finishSteps();
+
+          const metaGrid = document.getElementById('meta-grid');
+          metaGrid.innerHTML = `
+            <span class="key">Provider</span>  <span class="val">${data.provider}</span>
+            <span class="key">Service</span>   <span class="val">${data.service}</span>
+            <span class="key">Version</span>   <span class="val">~> ${data.version}</span>
+            <span class="key">Resources</span> <span class="val">${data.resources.length}</span>
+          `;
+
+          const dlBtn = document.getElementById('download-btn');
+          dlBtn.href      = data.download_url;
+          dlBtn.download  = data.filename;
+          dlBtn.textContent = `\u2b07  Download  ${data.filename}`;
+
+          const rl = document.getElementById('resource-list');
+          rl.innerHTML = data.resources.map(r => `<li>${r}</li>`).join('');
+
+          progressEl.style.display = 'none';
+          resultEl.style.display   = 'block';
+
+        } else {
+          // --- Unexpected response (HTML error page from CDN / proxy) ---
+          let hint = `Server returned HTTP ${resp.status}`;
+          try {
+            const raw = await resp.text();
+            // Strip HTML tags for a cleaner message
+            const stripped = raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+            if (stripped) hint += ': ' + stripped.slice(0, 200);
+          } catch (_) { /* ignore secondary read error */ }
+          throw new Error(hint);
         }
-
-        finishSteps();
-
-        // Build meta grid
-        const metaGrid = document.getElementById('meta-grid');
-        metaGrid.innerHTML = `
-          <span class="key">Provider</span>  <span class="val">${data.provider}</span>
-          <span class="key">Service</span>   <span class="val">${data.service}</span>
-          <span class="key">Version</span>   <span class="val">~> ${data.version}</span>
-          <span class="key">Resources</span> <span class="val">${data.resources.length}</span>
-        `;
-
-        // Download link
-        const dlBtn = document.getElementById('download-btn');
-        dlBtn.href     = data.download_url;
-        dlBtn.download = data.filename;
-        dlBtn.textContent = `⬇  Download  ${data.filename}`;
-
-        // Resource list
-        const rl = document.getElementById('resource-list');
-        rl.innerHTML = data.resources
-          .map(r => `<li>${r}</li>`)
-          .join('');
-
-        progressEl.style.display = 'none';
-        resultEl.style.display   = 'block';
 
       } catch (err) {
         stopSteps();

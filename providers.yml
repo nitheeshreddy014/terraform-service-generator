@@ -1,0 +1,22 @@
+# providers.yml
+# ─────────────────────────────────────────────────────────────
+# Single source of truth for all supported CSP providers.
+#
+# To add a new provider:
+#   1. Add an entry below (namespace + type from Terraform Registry)
+#   2. Commit and push — the workflow does the rest automatically.
+#      No changes needed to any Python script or workflow YAML.
+#
+# Provider types must match the Terraform Registry:
+#   https://registry.terraform.io/browse/providers
+# ─────────────────────────────────────────────────────────────
+
+providers:
+  - namespace: hashicorp
+    type: aws
+
+  - namespace: hashicorp
+    type: azurerm
+
+  - namespace: hashicorp
+    type: google
