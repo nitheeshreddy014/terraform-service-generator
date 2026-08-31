@@ -78,11 +78,35 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
-PROVIDERS = [
+
+# Fallback list if providers.yml is missing
+_PROVIDERS_FALLBACK = [
     {"namespace": "hashicorp", "type": "google"},
     {"namespace": "hashicorp", "type": "aws"},
     {"namespace": "hashicorp", "type": "azurerm"},
 ]
+
+
+def _load_providers_config(filter_types: set[str] | None = None) -> list[dict]:
+    """
+    Load providers from providers.yml next to the package root.
+    If the file is missing or unreadable, fall back to the hardcoded list.
+    Optionally filter by provider type names.
+    """
+    config_path = _PKG_ROOT / "providers.yml"
+    try:
+        import yaml
+        with open(config_path, encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        providers = config.get("providers", [])
+        log.info("Loaded %d provider(s) from %s", len(providers), config_path)
+    except Exception as exc:
+        log.warning("Could not load providers.yml (%s) — using fallback list.", exc)
+        providers = _PROVIDERS_FALLBACK
+
+    if filter_types:
+        providers = [p for p in providers if p["type"] in filter_types]
+    return providers
 
 OUTPUT_ROOT = _PKG_ROOT / "generated-schemas"   # wiped & recreated at start
 MANIFEST    = OUTPUT_ROOT / "manifest.json"
@@ -690,9 +714,9 @@ def main() -> None:
         OUTPUT_ROOT = Path(args.output_dir).resolve()
         MANIFEST    = OUTPUT_ROOT / "manifest.json"
 
-    # Filter provider list
-    selected_types = set(args.providers) if args.providers else {p["type"] for p in PROVIDERS}
-    selected = [p for p in PROVIDERS if p["type"] in selected_types]
+    # Load providers from providers.yml (filtered by --providers flag if given)
+    filter_types = set(args.providers) if args.providers else None
+    selected = _load_providers_config(filter_types)
 
     bar = "=" * 66
     log.info(bar)

@@ -1,147 +1,121 @@
 name: Update Provider Schemas
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Triggers
-# ──────────────────────────────────────────────────────────────────────────────
 on:
+  # Run every Tuesday at 03:00 UTC automatically
   schedule:
-    - cron: "0 3 * * 1"   # Every Monday at 03:00 UTC
-  workflow_dispatch:        # Allow manual runs from the Actions tab
+    - cron: "0 3 * * 2"
 
-# ──────────────────────────────────────────────────────────────────────────────
-# One concurrent run at a time; never cancel an in-progress generation.
-# ──────────────────────────────────────────────────────────────────────────────
-concurrency:
-  group: update-provider-schemas
-  cancel-in-progress: false
+  # Run on every push to any branch
+  push:
+    branches:
+      - "**"
+
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
 
 jobs:
-  generate-schemas:
-    name: Generate & validate provider schemas
+  update-schemas:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write   # needed for git push
-
-    env:
-      STAGING_DIR: generated-schemas-staging
-      BACKUP_DIR:  generated-schemas-backup
+    # Skip if this is the workflow's own schema-update commit (prevents infinite loop)
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
 
     steps:
-      # ── 1. Checkout ──────────────────────────────────────────────────────
+      # ── 1. Checkout ────────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
-          # Use the default GITHUB_TOKEN; commits tagged [skip ci] avoid loops.
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      # ── 2. Python ────────────────────────────────────────────────────────
+      # ── 2. Python setup ────────────────────────────────────────────────────
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements.txt
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      # ── 3. Terraform ─────────────────────────────────────────────────────
+      # ── 3. Terraform setup ─────────────────────────────────────────────────
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.8.5"
-          terraform_wrapper: false
 
-      # ── 4. Backup existing schemas ────────────────────────────────────────
-      - name: Backup current generated-schemas
+      # ── 4. Backup existing schemas (safety net) ────────────────────────────
+      - name: Backup existing schemas
         run: |
           if [ -d generated-schemas ]; then
-            cp -r generated-schemas "$BACKUP_DIR"
-            echo "Backup created at $BACKUP_DIR"
+            cp -r generated-schemas generated-schemas-backup
+            echo "Backup created: generated-schemas-backup/"
           else
-            echo "No existing generated-schemas to back up"
+            echo "No existing schemas to back up."
           fi
 
-      # ── 5. Generate into staging ──────────────────────────────────────────
-      - name: Generate AWS schemas
-        id: gen_aws
+      # ── 5. Generate fresh schemas for ALL providers listed in providers.yml ─
+      #       To add a new provider: just add it to providers.yml and push.
+      #       No changes needed here.
+      - name: Generate latest schemas from all providers
         run: |
           python scripts/generate_schemas.py \
-            --providers aws \
-            --output-dir "$STAGING_DIR"
+            --output-dir generated-schemas-staging
+        env:
+          PYTHONUNBUFFERED: "1"
 
-      - name: Generate AzureRM schemas
-        id: gen_azurerm
-        run: |
-          python scripts/generate_schemas.py \
-            --providers azurerm \
-            --output-dir "$STAGING_DIR"
-
-      - name: Generate Google schemas
-        id: gen_google
-        run: |
-          python scripts/generate_schemas.py \
-            --providers google \
-            --output-dir "$STAGING_DIR"
-
-      # ── 6. Validate staging schemas ───────────────────────────────────────
-      - name: Validate all staging schema files
+      # ── 6. Validate staging schemas before touching the live folder ─────────
+      - name: Validate staging schemas
         run: |
           python scripts/validate_schemas.py \
-            --schemas-dir "$STAGING_DIR"
+            --schemas-dir generated-schemas-staging
 
-      # ── 7. Atomic replacement ─────────────────────────────────────────────
-      - name: Replace generated-schemas with validated staging data
+      # ── 7. Atomic replace: wipe old CSP folders, move staging in ───────────
+      - name: Replace schemas atomically
         run: |
           rm -rf generated-schemas
-          mv "$STAGING_DIR" generated-schemas
-          echo "generated-schemas replaced successfully"
+          mv generated-schemas-staging generated-schemas
+          echo "Live schemas replaced with validated staging data."
 
-      # ── 8. Detect changes ────────────────────────────────────────────────
-      - name: Check whether schemas actually changed
+      # ── 8. Detect if anything actually changed ─────────────────────────────
+      - name: Check for changes
         id: diff
         run: |
           git add generated-schemas/
           if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No schema changes detected; nothing to commit."
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No schema changes detected."
           else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            ADDED=$(git diff --cached --numstat | awk '{a+=$1} END{print a}')
-            REMOVED=$(git diff --cached --numstat | awk '{d+=$2} END{print d}')
-            echo "Lines added: $ADDED  removed: $REMOVED"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Schema changes detected — will commit."
           fi
 
-      # ── 9. Commit & push ─────────────────────────────────────────────────
+      # ── 9. Commit and push updated schemas back to the same branch ─────────
       - name: Commit and push updated schemas
         if: steps.diff.outputs.changed == 'true'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: update pre-generated provider schemas [skip ci]"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m "chore: update provider schemas [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}
 
-      # ── 10. Cleanup ───────────────────────────────────────────────────────
-      - name: Remove staging and backup directories
+      # ── 10. Cleanup temp dirs (always runs) ────────────────────────────────
+      - name: Cleanup temporary directories
         if: always()
         run: |
-          rm -rf "$STAGING_DIR" "$BACKUP_DIR"
-          # Remove any Terraform working directories that may have been created
-          find . -name ".terraform"    -type d -prune -exec rm -rf {} + 2>/dev/null || true
-          find . -name "*.tfstate"     -type f        -exec rm -f  {} + 2>/dev/null || true
-          find . -name "*.tfstate.backup" -type f     -exec rm -f  {} + 2>/dev/null || true
-          echo "Cleanup complete"
+          rm -rf generated-schemas-staging
+          rm -rf generated-schemas-backup
+          find . -maxdepth 3 -name ".terraform"  -type d -exec rm -rf {} + 2>/dev/null || true
+          find . -maxdepth 3 -name "*.tfstate"   -type f -delete              2>/dev/null || true
+          find . -maxdepth 3 -name "*.tfstate.*" -type f -delete              2>/dev/null || true
+          echo "Cleanup done."
 
-      # ── 11. Restore backup on failure ────────────────────────────────────
-      - name: Restore backup if generation or validation failed
+      # ── 11. Restore backup on failure (app is never left broken) ────────────
+      - name: Restore backup on failure
         if: failure()
         run: |
-          if [ -d "$BACKUP_DIR" ]; then
+          if [ -d generated-schemas-backup ]; then
             rm -rf generated-schemas
-            mv "$BACKUP_DIR" generated-schemas
-            echo "Previous generated-schemas restored from backup"
+            mv generated-schemas-backup generated-schemas
+            echo "Backup restored after failure."
           fi
-          echo "Workflow FAILED; previous schemas preserved."
-          exit 1

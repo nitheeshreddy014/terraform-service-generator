@@ -56,7 +56,24 @@ from generator.file_generator import generate_service_folder
 # ---------------------------------------------------------------------------
 SCHEMAS_DIR      = _PKG_ROOT / "generated-schemas"
 MANIFEST_PATH    = SCHEMAS_DIR / "manifest.json"
-ALLOWED_PROVIDERS = {"aws", "azurerm", "google"}
+
+
+def _load_allowed_providers() -> set[str]:
+    """
+    Load allowed provider types from providers.yml.
+    Falls back to the original hardcoded set if the file is missing.
+    """
+    config_path = _PKG_ROOT / "providers.yml"
+    try:
+        import yaml
+        with open(config_path, encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+        return {p["type"] for p in config.get("providers", [])}
+    except Exception:
+        return {"aws", "azurerm", "google"}  # fallback
+
+
+ALLOWED_PROVIDERS = _load_allowed_providers()
 
 # Rich services to use for the round-trip validation (one per provider)
 ROUND_TRIP_SERVICES = {
