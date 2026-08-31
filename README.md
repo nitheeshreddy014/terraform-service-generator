@@ -10,17 +10,18 @@
 
 1. [Overview](#overview)
 2. [How It Works](#how-it-works)
-3. [Prerequisites](#prerequisites)
-4. [Installation](#installation)
-5. [Running the App](#running-the-app)
-6. [Using the Frontend](#using-the-frontend)
-7. [API Reference](#api-reference)
-8. [Generated Folder Structure](#generated-folder-structure)
-9. [Example Output](#example-output)
-10. [Project Layout](#project-layout)
-11. [Configuration & Customisation](#configuration--customisation)
-12. [Contributing](#contributing)
-13. [License](#license)
+3. [Automated Schema Updates](#automated-schema-updates)
+4. [Prerequisites](#prerequisites)
+5. [Installation](#installation)
+6. [Running the App](#running-the-app)
+7. [Using the Frontend](#using-the-frontend)
+8. [API Reference](#api-reference)
+9. [Generated Folder Structure](#generated-folder-structure)
+10. [Example Output](#example-output)
+11. [Project Layout](#project-layout)
+12. [Configuration & Customisation](#configuration--customisation)
+13. [Contributing](#contributing)
+14. [License](#license)
 
 ---
 
@@ -48,6 +49,40 @@ produces the same files.
 
 ## How It Works
 
+The app runs in **two modes** depending on the environment:
+
+### Mode 1 — Vercel / Production (pre-generated schemas)
+
+On Vercel the filesystem is read-only, so Terraform cannot run live.
+Instead, the app reads **pre-baked, compressed schemas** committed into the
+repository under `generated-schemas/`. These are refreshed automatically
+every week by a GitHub Actions workflow (see [Automated Schema Updates](#automated-schema-updates)).
+
+```
+Browser  ──POST /generate──►  FastAPI
+                                │
+                          load schema from
+                          generated-schemas/<provider>/<service>.json.gz
+                                │
+                          extract_service_resources()
+                          (schema_parser)
+                                │
+                          generate_service_folder()
+                          (file_generator)
+                                │
+                          zip_service_folder()
+                          (zipper)
+                                │
+         ◄── JSON { download_url } ──
+                                │
+Browser  ──GET /download/x.zip──► FileResponse
+```
+
+### Mode 2 — Local / Docker (live Terraform)
+
+When running locally or in Docker, the app fetches schemas on-demand
+via a real `terraform init` + `terraform providers schema -json` call.
+
 ```
 Browser  ──POST /generate──►  FastAPI
                                 │
@@ -73,12 +108,54 @@ Browser  ──GET /download/x.zip──► FileResponse
 
 ---
 
+## Automated Schema Updates
+
+Provider schemas are kept up-to-date automatically — no manual intervention needed.
+
+### How it works
+
+| Trigger | When |
+|---|---|
+| Scheduled | Every **Tuesday at 03:00 UTC** |
+| Push | Every push to **any branch** |
+| Manual | Via **GitHub Actions → Run workflow** |
+
+On each run the workflow:
+1. Reads all providers from **`providers.yml`**
+2. Downloads the **latest stable version** of each from the Terraform Registry
+3. Splits the schema into per-service `.json.gz` files into a **staging directory**
+4. **Validates** every file before touching the live folder
+5. **Atomically replaces** `generated-schemas/<provider>/` with the validated staging data
+6. **Commits and pushes** the updated schemas back (`[skip ci]` prevents an infinite loop)
+7. **Restores the backup** automatically if anything fails
+
+### Adding a new CSP provider
+
+Edit **`providers.yml`** — that's it. No changes to any script or workflow file needed.
+
+```yaml
+# providers.yml
+providers:
+  - namespace: hashicorp
+    type: aws
+  - namespace: hashicorp
+    type: azurerm
+  - namespace: hashicorp
+    type: google
+  - namespace: hashicorp   # ← just add this
+    type: kubernetes        # ← commit & push — workflow handles the rest
+```
+
+The namespace and type must match the [Terraform Registry](https://registry.terraform.io/browse/providers).
+
+---
+
 ## Prerequisites
 
 | Requirement | Minimum version | Notes |
 |-------------|----------------|-------|
 | Python | 3.11+ | 3.12 recommended |
-| [Terraform CLI](https://developer.hashicorp.com/terraform/install) | 1.3.0+ | Must be on `PATH` |
+| [Terraform CLI](https://developer.hashicorp.com/terraform/install) | 1.3.0+ | Local/Docker mode only — **not needed on Vercel** |
 | pip | latest | `python -m pip install --upgrade pip` |
 | Internet access | — | Registry API + provider download |
 
@@ -314,9 +391,21 @@ s3/
 terraform-generator/
 ├── main.py                  ← FastAPI app + all route handlers
 ├── requirements.txt         ← Python dependencies
+├── providers.yml            ← CSP provider list — add new providers here
 ├── run_tests.py             ← Cross-CSP integration test suite (16 tests)
 ├── Dockerfile               ← Multi-stage build with pinned Terraform binary
 ├── docker-compose.yml       ← One-command start with provider cache volume
+├── .github/
+│   └── workflows/
+│       └── update-provider-schemas.yml  ← Weekly auto-update workflow
+├── scripts/
+│   ├── generate_schemas.py  ← Downloads providers + splits into .json.gz files
+│   └── validate_schemas.py  ← Validates every schema file before going live
+├── generated-schemas/       ← Pre-baked schemas used by Vercel (auto-updated)
+│   ├── aws/                 ← *.json.gz — one file per AWS service
+│   ├── azurerm/             ← *.json.gz — one file per Azure service
+│   ├── google/              ← *.json.gz — one file per GCP service
+│   └── manifest.json        ← Index of all providers, versions and services
 ├── generator/
 │   ├── __init__.py
 │   ├── provider.py          ← Registry API lookup + terraform init/schema (file-based)
@@ -335,6 +424,8 @@ terraform-generator/
 
 | What | Where | How |
 |------|-------|-----|
+| Add / remove a CSP provider | `providers.yml` | Add an entry, push — workflow auto-downloads on next run |
+| Schema update schedule | `.github/workflows/update-provider-schemas.yml` | Change the `cron` expression |
 | Server host / port | CLI | `uvicorn main:app --port 9000` |
 | Output directory | `main.py` | Change `OUTPUTS_DIR` |
 | Terraform version floor | `file_generator.py` | Edit `_render_versions_tf()` |
