@@ -25,6 +25,24 @@
 
 ---
 
+## Versions
+
+### v1 — Local / Live Mode
+The original version ran `terraform init` + `terraform providers schema -json` **on every user request** — live, on-demand. This worked perfectly locally and in Docker but **could not run on Vercel** because Vercel's filesystem is read-only and Terraform cannot be executed in that environment.
+
+### v2 — Pre-generated Schemas (Vercel-ready) ← Current
+To support Vercel deployment, provider schemas are now **pre-generated, compressed and committed directly into the repository** under `generated-schemas/`. A GitHub Actions workflow automatically downloads the latest provider schemas every Tuesday and on every push, so the app always serves up-to-date data without needing to run Terraform at runtime. Adding a new CSP provider requires only a one-line change to `providers.yml`.
+
+| | v1 | v2 |
+|---|---|---|
+| Schema source | Live `terraform init` per request | Pre-generated `.json.gz` files in repo |
+| Vercel compatible | ❌ No | ✅ Yes |
+| Auto-updates | ❌ No | ✅ Every Tuesday via GitHub Actions |
+| Add new provider | Code change required | Edit `providers.yml` only |
+| First request speed | 30–90s (provider download) | Instant (reads from file) |
+
+---
+
 ## Overview
 
 Given a **provider name** (e.g. `aws`) and a **service prefix** (e.g. `s3`),
