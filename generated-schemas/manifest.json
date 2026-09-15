@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-08T07:57:58.134586+00:00",
+  "generated_at": "2026-09-15T08:32:48.123755+00:00",
   "providers": {
     "aws": {
       "provider": "aws",
       "namespace": "hashicorp",
-      "version": "6.63.0",
-      "generated_at": "2026-09-08T07:57:37.749404+00:00",
+      "version": "6.64.0",
+      "generated_at": "2026-09-15T08:32:25.445428+00:00",
       "generation_status": "ok",
       "error": null,
       "available_services": [
@@ -19,6 +19,7 @@
         "acm_certificate",
         "acmpca",
         "acmpca_certificate",
+        "agentregistry",
         "alb",
         "alb_listener",
         "alb_target",
@@ -317,7 +318,9 @@
         "dlm",
         "dlm_lifecycle",
         "dms",
+        "dms_data",
         "dms_event",
+        "dms_instance",
         "dms_replication",
         "dms_s3",
         "docdb",
@@ -448,6 +451,7 @@
         "finspace_kx",
         "fis",
         "fis_experiment",
+        "fis_safety",
         "fis_target",
         "flow",
         "fms",
@@ -1181,8 +1185,8 @@
         },
         "accountaccess": {
           "file": "generated-schemas-staging/aws/accountaccess.json.gz",
-          "size_gz": 5236,
-          "resource_count": 1
+          "size_gz": 5505,
+          "resource_count": 4
         },
         "acm": {
           "file": "generated-schemas-staging/aws/acm.json.gz",
@@ -1203,6 +1207,11 @@
           "file": "generated-schemas-staging/aws/acmpca_certificate.json.gz",
           "size_gz": 5621,
           "resource_count": 5
+        },
+        "agentregistry": {
+          "file": "generated-schemas-staging/aws/agentregistry.json.gz",
+          "size_gz": 5566,
+          "resource_count": 2
         },
         "alb": {
           "file": "generated-schemas-staging/aws/alb.json.gz",
@@ -1316,7 +1325,7 @@
         },
         "appconfig": {
           "file": "generated-schemas-staging/aws/appconfig.json.gz",
-          "size_gz": 5669,
+          "size_gz": 5678,
           "resource_count": 13
         },
         "appconfig_configuration": {
@@ -1336,7 +1345,7 @@
         },
         "appconfig_hosted": {
           "file": "generated-schemas-staging/aws/appconfig_hosted.json.gz",
-          "size_gz": 5003,
+          "size_gz": 5011,
           "resource_count": 1
         },
         "appfabric": {
@@ -1666,8 +1675,8 @@
         },
         "bedrock": {
           "file": "generated-schemas-staging/aws/bedrock.json.gz",
-          "size_gz": 7324,
-          "resource_count": 17
+          "size_gz": 7543,
+          "resource_count": 18
         },
         "bedrock_custom": {
           "file": "generated-schemas-staging/aws/bedrock_custom.json.gz",
@@ -1696,8 +1705,8 @@
         },
         "bedrock_model": {
           "file": "generated-schemas-staging/aws/bedrock_model.json.gz",
-          "size_gz": 5069,
-          "resource_count": 1
+          "size_gz": 5553,
+          "resource_count": 2
         },
         "bedrock_provisioned": {
           "file": "generated-schemas-staging/aws/bedrock_provisioned.json.gz",
@@ -1731,7 +1740,7 @@
         },
         "bedrockagentcore": {
           "file": "generated-schemas-staging/aws/bedrockagentcore.json.gz",
-          "size_gz": 11220,
+          "size_gz": 11336,
           "resource_count": 21
         },
         "bedrockagentcore_agent": {
@@ -1766,7 +1775,7 @@
         },
         "bedrockagentcore_oauth2": {
           "file": "generated-schemas-staging/aws/bedrockagentcore_oauth2.json.gz",
-          "size_gz": 5303,
+          "size_gz": 5542,
           "resource_count": 1
         },
         "bedrockagentcore_online": {
@@ -2071,7 +2080,7 @@
         },
         "cloudwatch": {
           "file": "generated-schemas-staging/aws/cloudwatch.json.gz",
-          "size_gz": 9436,
+          "size_gz": 9484,
           "resource_count": 44
         },
         "cloudwatch_alarm": {
@@ -2101,7 +2110,7 @@
         },
         "cloudwatch_metric": {
           "file": "generated-schemas-staging/aws/cloudwatch_metric.json.gz",
-          "size_gz": 5570,
+          "size_gz": 5622,
           "resource_count": 2
         },
         "cloudwatch_otel": {
@@ -2536,7 +2545,7 @@
         },
         "db": {
           "file": "generated-schemas-staging/aws/db.json.gz",
-          "size_gz": 7559,
+          "size_gz": 7564,
           "resource_count": 22
         },
         "db_cluster": {
@@ -2551,7 +2560,7 @@
         },
         "db_instance": {
           "file": "generated-schemas-staging/aws/db_instance.json.gz",
-          "size_gz": 6302,
+          "size_gz": 6321,
           "resource_count": 4
         },
         "db_option": {
@@ -2691,12 +2700,22 @@
         },
         "dms": {
           "file": "generated-schemas-staging/aws/dms.json.gz",
-          "size_gz": 8464,
-          "resource_count": 13
+          "size_gz": 8832,
+          "resource_count": 15
+        },
+        "dms_data": {
+          "file": "generated-schemas-staging/aws/dms_data.json.gz",
+          "size_gz": 5336,
+          "resource_count": 1
         },
         "dms_event": {
           "file": "generated-schemas-staging/aws/dms_event.json.gz",
           "size_gz": 5052,
+          "resource_count": 1
+        },
+        "dms_instance": {
+          "file": "generated-schemas-staging/aws/dms_instance.json.gz",
+          "size_gz": 5045,
           "resource_count": 1
         },
         "dms_replication": {
@@ -3041,7 +3060,7 @@
         },
         "ecs": {
           "file": "generated-schemas-staging/aws/ecs.json.gz",
-          "size_gz": 9821,
+          "size_gz": 9838,
           "resource_count": 17
         },
         "ecs_account": {
@@ -3051,7 +3070,7 @@
         },
         "ecs_capacity": {
           "file": "generated-schemas-staging/aws/ecs_capacity.json.gz",
-          "size_gz": 5637,
+          "size_gz": 5655,
           "resource_count": 1
         },
         "ecs_cluster": {
@@ -3341,13 +3360,18 @@
         },
         "fis": {
           "file": "generated-schemas-staging/aws/fis.json.gz",
-          "size_gz": 5438,
-          "resource_count": 3
+          "size_gz": 5673,
+          "resource_count": 4
         },
         "fis_experiment": {
           "file": "generated-schemas-staging/aws/fis_experiment.json.gz",
           "size_gz": 5410,
           "resource_count": 2
+        },
+        "fis_safety": {
+          "file": "generated-schemas-staging/aws/fis_safety.json.gz",
+          "size_gz": 5170,
+          "resource_count": 1
         },
         "fis_target": {
           "file": "generated-schemas-staging/aws/fis_target.json.gz",
@@ -4366,7 +4390,7 @@
         },
         "msk": {
           "file": "generated-schemas-staging/aws/msk.json.gz",
-          "size_gz": 6980,
+          "size_gz": 7068,
           "resource_count": 16
         },
         "msk_bootstrap": {
@@ -5131,12 +5155,12 @@
         },
         "rds": {
           "file": "generated-schemas-staging/aws/rds.json.gz",
-          "size_gz": 8737,
-          "resource_count": 24
+          "size_gz": 8839,
+          "resource_count": 25
         },
         "rds_cluster": {
           "file": "generated-schemas-staging/aws/rds_cluster.json.gz",
-          "size_gz": 6844,
+          "size_gz": 6868,
           "resource_count": 9
         },
         "rds_custom": {
@@ -6781,7 +6805,7 @@
         },
         "workspaces": {
           "file": "generated-schemas-staging/aws/workspaces.json.gz",
-          "size_gz": 6764,
+          "size_gz": 6792,
           "resource_count": 9
         },
         "workspaces_connection": {
@@ -6874,8 +6898,8 @@
     "azurerm": {
       "provider": "azurerm",
       "namespace": "hashicorp",
-      "version": "5.4.0",
-      "generated_at": "2026-09-08T07:57:51.434924+00:00",
+      "version": "5.5.0",
+      "generated_at": "2026-09-15T08:32:41.026187+00:00",
       "generation_status": "ok",
       "error": null,
       "available_services": [
@@ -8955,12 +8979,12 @@
         },
         "public": {
           "file": "generated-schemas-staging/azurerm/public.json.gz",
-          "size_gz": 3265,
+          "size_gz": 3269,
           "resource_count": 6
         },
         "public_ip": {
           "file": "generated-schemas-staging/azurerm/public_ip.json.gz",
-          "size_gz": 3112,
+          "size_gz": 3116,
           "resource_count": 4
         },
         "public_maintenance": {
@@ -9275,12 +9299,12 @@
         },
         "storage": {
           "file": "generated-schemas-staging/azurerm/storage.json.gz",
-          "size_gz": 7559,
+          "size_gz": 7591,
           "resource_count": 47
         },
         "storage_account": {
           "file": "generated-schemas-staging/azurerm/storage_account.json.gz",
-          "size_gz": 5033,
+          "size_gz": 5051,
           "resource_count": 10
         },
         "storage_blob": {
@@ -9628,8 +9652,8 @@
     "google": {
       "provider": "google",
       "namespace": "hashicorp",
-      "version": "8.1.0",
-      "generated_at": "2026-09-08T07:57:54.446795+00:00",
+      "version": "8.2.0",
+      "generated_at": "2026-09-15T08:32:44.244738+00:00",
       "generation_status": "ok",
       "error": null,
       "available_services": [
@@ -9684,6 +9708,7 @@
         "beyondcorp",
         "beyondcorp_security",
         "biglake",
+        "biglake_hive",
         "biglake_iceberg",
         "bigquery",
         "bigquery_analytics",
@@ -9721,6 +9746,7 @@
         "ces_app",
         "chronicle",
         "chronicle_big",
+        "chronicle_case",
         "chronicle_custom",
         "chronicle_dashboard",
         "chronicle_data",
@@ -10005,6 +10031,9 @@
         "network_security",
         "network_services",
         "observability",
+        "observability_folder",
+        "observability_organization",
+        "observability_project",
         "observability_trace",
         "oracle",
         "oracle_database",
@@ -10086,6 +10115,7 @@
         "storage_bucket",
         "storage_control",
         "storage_default",
+        "storage_ftp",
         "storage_hmac",
         "storage_insights",
         "storage_managed",
@@ -10120,2417 +10150,2447 @@
       "services": {
         "access": {
           "file": "generated-schemas-staging/google/access.json.gz",
-          "size_gz": 14641,
+          "size_gz": 14646,
           "resource_count": 26
         },
         "access_approval": {
           "file": "generated-schemas-staging/google/access_approval.json.gz",
-          "size_gz": 1825,
+          "size_gz": 1830,
           "resource_count": 3
         },
         "access_context": {
           "file": "generated-schemas-staging/google/access_context.json.gz",
-          "size_gz": 14575,
+          "size_gz": 14580,
           "resource_count": 23
         },
         "active": {
           "file": "generated-schemas-staging/google/active.json.gz",
-          "size_gz": 3489,
+          "size_gz": 3494,
           "resource_count": 3
         },
         "active_directory": {
           "file": "generated-schemas-staging/google/active_directory.json.gz",
-          "size_gz": 3402,
+          "size_gz": 3406,
           "resource_count": 2
         },
         "agent": {
           "file": "generated-schemas-staging/google/agent.json.gz",
-          "size_gz": 5176,
+          "size_gz": 5182,
           "resource_count": 6
         },
         "agent_identity": {
           "file": "generated-schemas-staging/google/agent_identity.json.gz",
-          "size_gz": 3864,
+          "size_gz": 3869,
           "resource_count": 1
         },
         "agent_registry": {
           "file": "generated-schemas-staging/google/agent_registry.json.gz",
-          "size_gz": 3458,
+          "size_gz": 3463,
           "resource_count": 5
         },
         "agentic": {
           "file": "generated-schemas-staging/google/agentic.json.gz",
-          "size_gz": 5018,
+          "size_gz": 5024,
           "resource_count": 1
         },
         "agentic_applications": {
           "file": "generated-schemas-staging/google/agentic_applications.json.gz",
-          "size_gz": 5031,
+          "size_gz": 5037,
           "resource_count": 1
         },
         "alloydb": {
           "file": "generated-schemas-staging/google/alloydb.json.gz",
-          "size_gz": 11708,
+          "size_gz": 11714,
           "resource_count": 8
         },
         "alloydb_supported": {
           "file": "generated-schemas-staging/google/alloydb_supported.json.gz",
-          "size_gz": 1979,
+          "size_gz": 1981,
           "resource_count": 1
         },
         "apigee": {
           "file": "generated-schemas-staging/google/apigee.json.gz",
-          "size_gz": 19695,
+          "size_gz": 19700,
           "resource_count": 44
         },
         "apigee_addons": {
           "file": "generated-schemas-staging/google/apigee_addons.json.gz",
-          "size_gz": 2350,
+          "size_gz": 2355,
           "resource_count": 1
         },
         "apigee_api": {
           "file": "generated-schemas-staging/google/apigee_api.json.gz",
-          "size_gz": 5471,
+          "size_gz": 5476,
           "resource_count": 3
         },
         "apigee_app": {
           "file": "generated-schemas-staging/google/apigee_app.json.gz",
-          "size_gz": 2506,
+          "size_gz": 2511,
           "resource_count": 1
         },
         "apigee_control": {
           "file": "generated-schemas-staging/google/apigee_control.json.gz",
-          "size_gz": 2226,
+          "size_gz": 2231,
           "resource_count": 1
         },
         "apigee_data": {
           "file": "generated-schemas-staging/google/apigee_data.json.gz",
-          "size_gz": 2350,
+          "size_gz": 2355,
           "resource_count": 1
         },
         "apigee_developer": {
           "file": "generated-schemas-staging/google/apigee_developer.json.gz",
-          "size_gz": 3299,
+          "size_gz": 3304,
           "resource_count": 2
         },
         "apigee_dns": {
           "file": "generated-schemas-staging/google/apigee_dns.json.gz",
-          "size_gz": 2282,
+          "size_gz": 2287,
           "resource_count": 1
         },
         "apigee_endpoint": {
           "file": "generated-schemas-staging/google/apigee_endpoint.json.gz",
-          "size_gz": 2399,
+          "size_gz": 2404,
           "resource_count": 1
         },
         "apigee_env": {
           "file": "generated-schemas-staging/google/apigee_env.json.gz",
-          "size_gz": 2397,
+          "size_gz": 2402,
           "resource_count": 2
         },
         "apigee_envgroup": {
           "file": "generated-schemas-staging/google/apigee_envgroup.json.gz",
-          "size_gz": 2249,
+          "size_gz": 2254,
           "resource_count": 2
         },
         "apigee_environment": {
           "file": "generated-schemas-staging/google/apigee_environment.json.gz",
-          "size_gz": 4311,
+          "size_gz": 4316,
           "resource_count": 10
         },
         "apigee_instance": {
           "file": "generated-schemas-staging/google/apigee_instance.json.gz",
-          "size_gz": 3494,
+          "size_gz": 3500,
           "resource_count": 3
         },
         "apigee_keystores": {
           "file": "generated-schemas-staging/google/apigee_keystores.json.gz",
-          "size_gz": 3441,
+          "size_gz": 3446,
           "resource_count": 3
         },
         "apigee_nat": {
           "file": "generated-schemas-staging/google/apigee_nat.json.gz",
-          "size_gz": 2214,
+          "size_gz": 2219,
           "resource_count": 1
         },
         "apigee_security": {
           "file": "generated-schemas-staging/google/apigee_security.json.gz",
-          "size_gz": 4530,
+          "size_gz": 4535,
           "resource_count": 4
         },
         "apigee_sharedflow": {
           "file": "generated-schemas-staging/google/apigee_sharedflow.json.gz",
-          "size_gz": 2568,
+          "size_gz": 2573,
           "resource_count": 2
         },
         "apigee_sync": {
           "file": "generated-schemas-staging/google/apigee_sync.json.gz",
-          "size_gz": 2282,
+          "size_gz": 2287,
           "resource_count": 1
         },
         "apigee_target": {
           "file": "generated-schemas-staging/google/apigee_target.json.gz",
-          "size_gz": 3328,
+          "size_gz": 3333,
           "resource_count": 1
         },
         "apihub": {
           "file": "generated-schemas-staging/google/apihub.json.gz",
-          "size_gz": 6764,
+          "size_gz": 6769,
           "resource_count": 6
         },
         "apihub_api": {
           "file": "generated-schemas-staging/google/apihub_api.json.gz",
-          "size_gz": 3009,
+          "size_gz": 3014,
           "resource_count": 1
         },
         "apihub_host": {
           "file": "generated-schemas-staging/google/apihub_host.json.gz",
-          "size_gz": 2193,
+          "size_gz": 2198,
           "resource_count": 1
         },
         "apihub_plugin": {
           "file": "generated-schemas-staging/google/apihub_plugin.json.gz",
-          "size_gz": 4990,
+          "size_gz": 4995,
           "resource_count": 2
         },
         "apihub_runtime": {
           "file": "generated-schemas-staging/google/apihub_runtime.json.gz",
-          "size_gz": 2399,
+          "size_gz": 2403,
           "resource_count": 1
         },
         "apikeys": {
           "file": "generated-schemas-staging/google/apikeys.json.gz",
-          "size_gz": 3262,
+          "size_gz": 3403,
           "resource_count": 1
         },
         "app": {
           "file": "generated-schemas-staging/google/app.json.gz",
-          "size_gz": 11129,
+          "size_gz": 11134,
           "resource_count": 9
         },
         "app_engine": {
           "file": "generated-schemas-staging/google/app_engine.json.gz",
-          "size_gz": 11136,
+          "size_gz": 11141,
           "resource_count": 9
         },
         "apphub": {
           "file": "generated-schemas-staging/google/apphub.json.gz",
-          "size_gz": 3934,
+          "size_gz": 3939,
           "resource_count": 8
         },
         "apphub_discovered": {
           "file": "generated-schemas-staging/google/apphub_discovered.json.gz",
-          "size_gz": 1881,
+          "size_gz": 1886,
           "resource_count": 2
         },
         "apphub_service": {
           "file": "generated-schemas-staging/google/apphub_service.json.gz",
-          "size_gz": 3261,
+          "size_gz": 3266,
           "resource_count": 2
         },
         "artifact": {
           "file": "generated-schemas-staging/google/artifact.json.gz",
-          "size_gz": 7942,
+          "size_gz": 7947,
           "resource_count": 25
         },
         "artifact_registry": {
           "file": "generated-schemas-staging/google/artifact_registry.json.gz",
-          "size_gz": 7951,
+          "size_gz": 7956,
           "resource_count": 25
         },
         "assured": {
           "file": "generated-schemas-staging/google/assured.json.gz",
-          "size_gz": 5002,
+          "size_gz": 5007,
           "resource_count": 1
         },
         "assured_workloads": {
           "file": "generated-schemas-staging/google/assured_workloads.json.gz",
-          "size_gz": 5012,
+          "size_gz": 5017,
           "resource_count": 1
         },
         "backup": {
           "file": "generated-schemas-staging/google/backup.json.gz",
-          "size_gz": 13488,
+          "size_gz": 13493,
           "resource_count": 16
         },
         "backup_dr": {
           "file": "generated-schemas-staging/google/backup_dr.json.gz",
-          "size_gz": 13491,
+          "size_gz": 13496,
           "resource_count": 16
         },
         "beyondcorp": {
           "file": "generated-schemas-staging/google/beyondcorp.json.gz",
-          "size_gz": 4398,
+          "size_gz": 4403,
           "resource_count": 11
         },
         "beyondcorp_security": {
           "file": "generated-schemas-staging/google/beyondcorp_security.json.gz",
-          "size_gz": 4407,
+          "size_gz": 4412,
           "resource_count": 11
         },
         "biglake": {
           "file": "generated-schemas-staging/google/biglake.json.gz",
-          "size_gz": 5788,
-          "resource_count": 18
+          "size_gz": 7277,
+          "resource_count": 33
+        },
+        "biglake_hive": {
+          "file": "generated-schemas-staging/google/biglake_hive.json.gz",
+          "size_gz": 3629,
+          "resource_count": 15
         },
         "biglake_iceberg": {
           "file": "generated-schemas-staging/google/biglake_iceberg.json.gz",
-          "size_gz": 4699,
+          "size_gz": 4704,
           "resource_count": 15
         },
         "bigquery": {
           "file": "generated-schemas-staging/google/bigquery.json.gz",
-          "size_gz": 40791,
-          "resource_count": 56
+          "size_gz": 41131,
+          "resource_count": 57
         },
         "bigquery_analytics": {
           "file": "generated-schemas-staging/google/bigquery_analytics.json.gz",
-          "size_gz": 9936,
+          "size_gz": 9941,
           "resource_count": 12
         },
         "bigquery_bi": {
           "file": "generated-schemas-staging/google/bigquery_bi.json.gz",
-          "size_gz": 2416,
+          "size_gz": 2421,
           "resource_count": 1
         },
         "bigquery_capacity": {
           "file": "generated-schemas-staging/google/bigquery_capacity.json.gz",
-          "size_gz": 2752,
+          "size_gz": 2757,
           "resource_count": 1
         },
         "bigquery_connection": {
           "file": "generated-schemas-staging/google/bigquery_connection.json.gz",
-          "size_gz": 4588,
+          "size_gz": 4593,
           "resource_count": 5
         },
         "bigquery_data": {
           "file": "generated-schemas-staging/google/bigquery_data.json.gz",
-          "size_gz": 4150,
-          "resource_count": 1
+          "size_gz": 4532,
+          "resource_count": 2
         },
         "bigquery_datapolicy": {
           "file": "generated-schemas-staging/google/bigquery_datapolicy.json.gz",
-          "size_gz": 2789,
+          "size_gz": 2794,
           "resource_count": 5
         },
         "bigquery_datapolicyv2": {
           "file": "generated-schemas-staging/google/bigquery_datapolicyv2.json.gz",
-          "size_gz": 3338,
+          "size_gz": 3344,
           "resource_count": 5
         },
         "bigquery_dataset": {
           "file": "generated-schemas-staging/google/bigquery_dataset.json.gz",
-          "size_gz": 6348,
+          "size_gz": 6353,
           "resource_count": 7
         },
         "bigquery_default": {
           "file": "generated-schemas-staging/google/bigquery_default.json.gz",
-          "size_gz": 1784,
+          "size_gz": 1788,
           "resource_count": 1
         },
         "bigquery_reservation": {
           "file": "generated-schemas-staging/google/bigquery_reservation.json.gz",
-          "size_gz": 4219,
+          "size_gz": 4224,
           "resource_count": 3
         },
         "bigquery_routine": {
           "file": "generated-schemas-staging/google/bigquery_routine.json.gz",
-          "size_gz": 4687,
+          "size_gz": 4692,
           "resource_count": 5
         },
         "bigquery_row": {
           "file": "generated-schemas-staging/google/bigquery_row.json.gz",
-          "size_gz": 2999,
+          "size_gz": 3004,
           "resource_count": 1
         },
         "bigquery_table": {
           "file": "generated-schemas-staging/google/bigquery_table.json.gz",
-          "size_gz": 11387,
+          "size_gz": 11394,
           "resource_count": 6
         },
         "bigtable": {
           "file": "generated-schemas-staging/google/bigtable.json.gz",
-          "size_gz": 7514,
+          "size_gz": 7519,
           "resource_count": 16
         },
         "bigtable_app": {
           "file": "generated-schemas-staging/google/bigtable_app.json.gz",
-          "size_gz": 3142,
+          "size_gz": 3147,
           "resource_count": 1
         },
         "bigtable_authorized": {
           "file": "generated-schemas-staging/google/bigtable_authorized.json.gz",
-          "size_gz": 2672,
+          "size_gz": 2676,
           "resource_count": 1
         },
         "bigtable_gc": {
           "file": "generated-schemas-staging/google/bigtable_gc.json.gz",
-          "size_gz": 2700,
+          "size_gz": 2705,
           "resource_count": 1
         },
         "bigtable_instance": {
           "file": "generated-schemas-staging/google/bigtable_instance.json.gz",
-          "size_gz": 3828,
+          "size_gz": 3833,
           "resource_count": 5
         },
         "bigtable_logical": {
           "file": "generated-schemas-staging/google/bigtable_logical.json.gz",
-          "size_gz": 2257,
+          "size_gz": 2262,
           "resource_count": 1
         },
         "bigtable_materialized": {
           "file": "generated-schemas-staging/google/bigtable_materialized.json.gz",
-          "size_gz": 2273,
+          "size_gz": 2277,
           "resource_count": 1
         },
         "bigtable_schema": {
           "file": "generated-schemas-staging/google/bigtable_schema.json.gz",
-          "size_gz": 2634,
+          "size_gz": 2638,
           "resource_count": 1
         },
         "bigtable_table": {
           "file": "generated-schemas-staging/google/bigtable_table.json.gz",
-          "size_gz": 3472,
+          "size_gz": 3477,
           "resource_count": 5
         },
         "billing": {
           "file": "generated-schemas-staging/google/billing.json.gz",
-          "size_gz": 5140,
+          "size_gz": 5146,
           "resource_count": 8
         },
         "billing_account": {
           "file": "generated-schemas-staging/google/billing_account.json.gz",
-          "size_gz": 1957,
+          "size_gz": 1962,
           "resource_count": 5
         },
         "billing_project": {
           "file": "generated-schemas-staging/google/billing_project.json.gz",
-          "size_gz": 2170,
+          "size_gz": 2175,
           "resource_count": 1
         },
         "binary": {
           "file": "generated-schemas-staging/google/binary.json.gz",
-          "size_gz": 4558,
+          "size_gz": 4563,
           "resource_count": 6
         },
         "binary_authorization": {
           "file": "generated-schemas-staging/google/binary_authorization.json.gz",
-          "size_gz": 4572,
+          "size_gz": 4577,
           "resource_count": 6
         },
         "blockchain": {
           "file": "generated-schemas-staging/google/blockchain.json.gz",
-          "size_gz": 3332,
+          "size_gz": 3337,
           "resource_count": 1
         },
         "blockchain_node": {
           "file": "generated-schemas-staging/google/blockchain_node.json.gz",
-          "size_gz": 3337,
+          "size_gz": 3342,
           "resource_count": 1
         },
         "certificate": {
           "file": "generated-schemas-staging/google/certificate.json.gz",
-          "size_gz": 6368,
+          "size_gz": 6373,
           "resource_count": 9
         },
         "certificate_manager": {
           "file": "generated-schemas-staging/google/certificate_manager.json.gz",
-          "size_gz": 6376,
+          "size_gz": 6381,
           "resource_count": 9
         },
         "ces": {
           "file": "generated-schemas-staging/google/ces.json.gz",
-          "size_gz": 24092,
+          "size_gz": 24852,
           "resource_count": 9
         },
         "ces_app": {
           "file": "generated-schemas-staging/google/ces_app.json.gz",
-          "size_gz": 9993,
+          "size_gz": 10505,
           "resource_count": 3
         },
         "chronicle": {
           "file": "generated-schemas-staging/google/chronicle.json.gz",
-          "size_gz": 24013,
-          "resource_count": 22
+          "size_gz": 24633,
+          "resource_count": 24
         },
         "chronicle_big": {
           "file": "generated-schemas-staging/google/chronicle_big.json.gz",
-          "size_gz": 2442,
+          "size_gz": 2447,
           "resource_count": 1
+        },
+        "chronicle_case": {
+          "file": "generated-schemas-staging/google/chronicle_case.json.gz",
+          "size_gz": 3016,
+          "resource_count": 2
         },
         "chronicle_custom": {
           "file": "generated-schemas-staging/google/chronicle_custom.json.gz",
-          "size_gz": 2299,
+          "size_gz": 2305,
           "resource_count": 1
         },
         "chronicle_dashboard": {
           "file": "generated-schemas-staging/google/chronicle_dashboard.json.gz",
-          "size_gz": 4732,
+          "size_gz": 4736,
           "resource_count": 1
         },
         "chronicle_data": {
           "file": "generated-schemas-staging/google/chronicle_data.json.gz",
-          "size_gz": 5102,
+          "size_gz": 5107,
           "resource_count": 5
         },
         "chronicle_environment": {
           "file": "generated-schemas-staging/google/chronicle_environment.json.gz",
-          "size_gz": 2781,
+          "size_gz": 2786,
           "resource_count": 2
         },
         "chronicle_findings": {
           "file": "generated-schemas-staging/google/chronicle_findings.json.gz",
-          "size_gz": 2863,
+          "size_gz": 2868,
           "resource_count": 2
         },
         "chronicle_native": {
           "file": "generated-schemas-staging/google/chronicle_native.json.gz",
-          "size_gz": 3252,
+          "size_gz": 3257,
           "resource_count": 1
         },
         "chronicle_parser": {
           "file": "generated-schemas-staging/google/chronicle_parser.json.gz",
-          "size_gz": 4523,
+          "size_gz": 4528,
           "resource_count": 2
         },
         "chronicle_reference": {
           "file": "generated-schemas-staging/google/chronicle_reference.json.gz",
-          "size_gz": 2714,
+          "size_gz": 2720,
           "resource_count": 1
         },
         "chronicle_rule": {
           "file": "generated-schemas-staging/google/chronicle_rule.json.gz",
-          "size_gz": 4330,
+          "size_gz": 4335,
           "resource_count": 2
         },
         "chronicle_soar": {
           "file": "generated-schemas-staging/google/chronicle_soar.json.gz",
-          "size_gz": 2356,
+          "size_gz": 2362,
           "resource_count": 1
         },
         "client": {
           "file": "generated-schemas-staging/google/client.json.gz",
-          "size_gz": 2401,
+          "size_gz": 2406,
           "resource_count": 2
         },
         "client_openid": {
           "file": "generated-schemas-staging/google/client_openid.json.gz",
-          "size_gz": 2189,
+          "size_gz": 2193,
           "resource_count": 1
         },
         "cloud": {
           "file": "generated-schemas-staging/google/cloud.json.gz",
-          "size_gz": 51868,
+          "size_gz": 51874,
           "resource_count": 53
         },
         "cloud_asset": {
           "file": "generated-schemas-staging/google/cloud_asset.json.gz",
-          "size_gz": 3576,
+          "size_gz": 3580,
           "resource_count": 4
         },
         "cloud_identity": {
           "file": "generated-schemas-staging/google/cloud_identity.json.gz",
-          "size_gz": 4303,
+          "size_gz": 4308,
           "resource_count": 8
         },
         "cloud_ids": {
           "file": "generated-schemas-staging/google/cloud_ids.json.gz",
-          "size_gz": 2538,
+          "size_gz": 2543,
           "resource_count": 1
         },
         "cloud_quotas": {
           "file": "generated-schemas-staging/google/cloud_quotas.json.gz",
-          "size_gz": 4071,
+          "size_gz": 4076,
           "resource_count": 4
         },
         "cloud_run": {
           "file": "generated-schemas-staging/google/cloud_run.json.gz",
-          "size_gz": 37540,
+          "size_gz": 37546,
           "resource_count": 26
         },
         "cloud_scheduler": {
           "file": "generated-schemas-staging/google/cloud_scheduler.json.gz",
-          "size_gz": 4257,
+          "size_gz": 4262,
           "resource_count": 1
         },
         "cloud_security": {
           "file": "generated-schemas-staging/google/cloud_security.json.gz",
-          "size_gz": 5290,
+          "size_gz": 5296,
           "resource_count": 3
         },
         "cloud_support": {
           "file": "generated-schemas-staging/google/cloud_support.json.gz",
-          "size_gz": 2388,
+          "size_gz": 2393,
           "resource_count": 1
         },
         "cloud_tasks": {
           "file": "generated-schemas-staging/google/cloud_tasks.json.gz",
-          "size_gz": 5131,
+          "size_gz": 5136,
           "resource_count": 5
         },
         "cloudbuild": {
           "file": "generated-schemas-staging/google/cloudbuild.json.gz",
-          "size_gz": 14118,
+          "size_gz": 14124,
           "resource_count": 4
         },
         "cloudbuild_bitbucket": {
           "file": "generated-schemas-staging/google/cloudbuild_bitbucket.json.gz",
-          "size_gz": 2897,
+          "size_gz": 2902,
           "resource_count": 1
         },
         "cloudbuild_worker": {
           "file": "generated-schemas-staging/google/cloudbuild_worker.json.gz",
-          "size_gz": 3709,
+          "size_gz": 3714,
           "resource_count": 1
         },
         "cloudbuildv2": {
           "file": "generated-schemas-staging/google/cloudbuildv2.json.gz",
-          "size_gz": 4067,
+          "size_gz": 4072,
           "resource_count": 6
         },
         "cloudbuildv2_connection": {
           "file": "generated-schemas-staging/google/cloudbuildv2_connection.json.gz",
-          "size_gz": 3975,
+          "size_gz": 3980,
           "resource_count": 5
         },
         "clouddeploy": {
           "file": "generated-schemas-staging/google/clouddeploy.json.gz",
-          "size_gz": 13031,
+          "size_gz": 13036,
           "resource_count": 17
         },
         "clouddeploy_custom": {
           "file": "generated-schemas-staging/google/clouddeploy_custom.json.gz",
-          "size_gz": 3824,
+          "size_gz": 3830,
           "resource_count": 5
         },
         "clouddeploy_delivery": {
           "file": "generated-schemas-staging/google/clouddeploy_delivery.json.gz",
-          "size_gz": 6021,
+          "size_gz": 6027,
           "resource_count": 5
         },
         "clouddeploy_deploy": {
           "file": "generated-schemas-staging/google/clouddeploy_deploy.json.gz",
-          "size_gz": 4661,
+          "size_gz": 4666,
           "resource_count": 1
         },
         "clouddeploy_target": {
           "file": "generated-schemas-staging/google/clouddeploy_target.json.gz",
-          "size_gz": 4747,
+          "size_gz": 4752,
           "resource_count": 5
         },
         "clouddomains": {
           "file": "generated-schemas-staging/google/clouddomains.json.gz",
-          "size_gz": 5131,
+          "size_gz": 5137,
           "resource_count": 1
         },
         "cloudfunctions": {
           "file": "generated-schemas-staging/google/cloudfunctions.json.gz",
-          "size_gz": 5451,
+          "size_gz": 5456,
           "resource_count": 6
         },
         "cloudfunctions2": {
           "file": "generated-schemas-staging/google/cloudfunctions2.json.gz",
-          "size_gz": 6663,
+          "size_gz": 6669,
           "resource_count": 6
         },
         "cloudfunctions2_function": {
           "file": "generated-schemas-staging/google/cloudfunctions2_function.json.gz",
-          "size_gz": 6672,
+          "size_gz": 6678,
           "resource_count": 6
         },
         "cloudfunctions_function": {
           "file": "generated-schemas-staging/google/cloudfunctions_function.json.gz",
-          "size_gz": 5460,
+          "size_gz": 5465,
           "resource_count": 6
         },
         "colab": {
           "file": "generated-schemas-staging/google/colab.json.gz",
-          "size_gz": 10008,
+          "size_gz": 10013,
           "resource_count": 8
         },
         "colab_notebook": {
           "file": "generated-schemas-staging/google/colab_notebook.json.gz",
-          "size_gz": 3454,
+          "size_gz": 3458,
           "resource_count": 1
         },
         "colab_runtime": {
           "file": "generated-schemas-staging/google/colab_runtime.json.gz",
-          "size_gz": 4053,
+          "size_gz": 4058,
           "resource_count": 6
         },
         "composer": {
           "file": "generated-schemas-staging/google/composer.json.gz",
-          "size_gz": 9362,
+          "size_gz": 9366,
           "resource_count": 7
         },
         "composer_image": {
           "file": "generated-schemas-staging/google/composer_image.json.gz",
-          "size_gz": 1818,
+          "size_gz": 1823,
           "resource_count": 1
         },
         "composer_user": {
           "file": "generated-schemas-staging/google/composer_user.json.gz",
-          "size_gz": 2392,
+          "size_gz": 2397,
           "resource_count": 4
         },
         "compute": {
           "file": "generated-schemas-staging/google/compute.json.gz",
-          "size_gz": 253270,
+          "size_gz": 253281,
           "resource_count": 249
         },
         "compute_attached": {
           "file": "generated-schemas-staging/google/compute_attached.json.gz",
-          "size_gz": 2634,
+          "size_gz": 2639,
           "resource_count": 1
         },
         "compute_backend": {
           "file": "generated-schemas-staging/google/compute_backend.json.gz",
-          "size_gz": 18360,
+          "size_gz": 18365,
           "resource_count": 6
         },
         "compute_bulk": {
           "file": "generated-schemas-staging/google/compute_bulk.json.gz",
-          "size_gz": 2172,
+          "size_gz": 2177,
           "resource_count": 1
         },
         "compute_cross": {
           "file": "generated-schemas-staging/google/compute_cross.json.gz",
-          "size_gz": 2306,
+          "size_gz": 2311,
           "resource_count": 1
         },
         "compute_default": {
           "file": "generated-schemas-staging/google/compute_default.json.gz",
-          "size_gz": 1807,
+          "size_gz": 1811,
           "resource_count": 1
         },
         "compute_disk": {
           "file": "generated-schemas-staging/google/compute_disk.json.gz",
-          "size_gz": 6674,
+          "size_gz": 6679,
           "resource_count": 8
         },
         "compute_external": {
           "file": "generated-schemas-staging/google/compute_external.json.gz",
-          "size_gz": 3237,
+          "size_gz": 3242,
           "resource_count": 1
         },
         "compute_firewall": {
           "file": "generated-schemas-staging/google/compute_firewall.json.gz",
-          "size_gz": 7663,
+          "size_gz": 7668,
           "resource_count": 9
         },
         "compute_forwarding": {
           "file": "generated-schemas-staging/google/compute_forwarding.json.gz",
-          "size_gz": 7059,
+          "size_gz": 7064,
           "resource_count": 3
         },
         "compute_global": {
           "file": "generated-schemas-staging/google/compute_global.json.gz",
-          "size_gz": 8318,
+          "size_gz": 8323,
           "resource_count": 7
         },
         "compute_ha": {
           "file": "generated-schemas-staging/google/compute_ha.json.gz",
-          "size_gz": 3544,
+          "size_gz": 3548,
           "resource_count": 2
         },
         "compute_health": {
           "file": "generated-schemas-staging/google/compute_health.json.gz",
-          "size_gz": 4343,
+          "size_gz": 4348,
           "resource_count": 2
         },
         "compute_http": {
           "file": "generated-schemas-staging/google/compute_http.json.gz",
-          "size_gz": 2727,
+          "size_gz": 2732,
           "resource_count": 1
         },
         "compute_https": {
           "file": "generated-schemas-staging/google/compute_https.json.gz",
-          "size_gz": 2731,
+          "size_gz": 2736,
           "resource_count": 1
         },
         "compute_image": {
           "file": "generated-schemas-staging/google/compute_image.json.gz",
-          "size_gz": 5103,
+          "size_gz": 5108,
           "resource_count": 6
         },
         "compute_instance": {
           "file": "generated-schemas-staging/google/compute_instance.json.gz",
-          "size_gz": 30655,
+          "size_gz": 30660,
           "resource_count": 23
         },
         "compute_instant": {
           "file": "generated-schemas-staging/google/compute_instant.json.gz",
-          "size_gz": 3065,
+          "size_gz": 3070,
           "resource_count": 5
         },
         "compute_interconnect": {
           "file": "generated-schemas-staging/google/compute_interconnect.json.gz",
-          "size_gz": 9528,
+          "size_gz": 9533,
           "resource_count": 6
         },
         "compute_lb": {
           "file": "generated-schemas-staging/google/compute_lb.json.gz",
-          "size_gz": 1785,
+          "size_gz": 1790,
           "resource_count": 1
         },
         "compute_machine": {
           "file": "generated-schemas-staging/google/compute_machine.json.gz",
-          "size_gz": 1988,
+          "size_gz": 2001,
           "resource_count": 1
         },
         "compute_managed": {
           "file": "generated-schemas-staging/google/compute_managed.json.gz",
-          "size_gz": 2707,
+          "size_gz": 2712,
           "resource_count": 1
         },
         "compute_network": {
           "file": "generated-schemas-staging/google/compute_network.json.gz",
-          "size_gz": 11128,
+          "size_gz": 11133,
           "resource_count": 20
         },
         "compute_node": {
           "file": "generated-schemas-staging/google/compute_node.json.gz",
-          "size_gz": 4126,
+          "size_gz": 4131,
           "resource_count": 3
         },
         "compute_organization": {
           "file": "generated-schemas-staging/google/compute_organization.json.gz",
-          "size_gz": 4727,
+          "size_gz": 4732,
           "resource_count": 3
         },
         "compute_packet": {
           "file": "generated-schemas-staging/google/compute_packet.json.gz",
-          "size_gz": 2964,
+          "size_gz": 2969,
           "resource_count": 1
         },
         "compute_per": {
           "file": "generated-schemas-staging/google/compute_per.json.gz",
-          "size_gz": 3161,
+          "size_gz": 3166,
           "resource_count": 1
         },
         "compute_preview": {
           "file": "generated-schemas-staging/google/compute_preview.json.gz",
-          "size_gz": 2047,
+          "size_gz": 2052,
           "resource_count": 1
         },
         "compute_project": {
           "file": "generated-schemas-staging/google/compute_project.json.gz",
-          "size_gz": 2394,
+          "size_gz": 2398,
           "resource_count": 4
         },
         "compute_public": {
           "file": "generated-schemas-staging/google/compute_public.json.gz",
-          "size_gz": 3364,
+          "size_gz": 3369,
           "resource_count": 2
         },
         "compute_region": {
           "file": "generated-schemas-staging/google/compute_region.json.gz",
-          "size_gz": 72854,
+          "size_gz": 72860,
           "resource_count": 51
         },
         "compute_reservation": {
           "file": "generated-schemas-staging/google/compute_reservation.json.gz",
-          "size_gz": 4988,
+          "size_gz": 4993,
           "resource_count": 4
         },
         "compute_resize": {
           "file": "generated-schemas-staging/google/compute_resize.json.gz",
-          "size_gz": 2834,
+          "size_gz": 2839,
           "resource_count": 1
         },
         "compute_resource": {
           "file": "generated-schemas-staging/google/compute_resource.json.gz",
-          "size_gz": 4666,
+          "size_gz": 4671,
           "resource_count": 3
         },
         "compute_rollout": {
           "file": "generated-schemas-staging/google/compute_rollout.json.gz",
-          "size_gz": 3179,
+          "size_gz": 3184,
           "resource_count": 1
         },
         "compute_router": {
           "file": "generated-schemas-staging/google/compute_router.json.gz",
-          "size_gz": 11646,
+          "size_gz": 11651,
           "resource_count": 10
         },
         "compute_security": {
           "file": "generated-schemas-staging/google/compute_security.json.gz",
-          "size_gz": 8738,
+          "size_gz": 8743,
           "resource_count": 3
         },
         "compute_service": {
           "file": "generated-schemas-staging/google/compute_service.json.gz",
-          "size_gz": 3896,
+          "size_gz": 3903,
           "resource_count": 2
         },
         "compute_shared": {
           "file": "generated-schemas-staging/google/compute_shared.json.gz",
-          "size_gz": 2218,
+          "size_gz": 2223,
           "resource_count": 2
         },
         "compute_snapshot": {
           "file": "generated-schemas-staging/google/compute_snapshot.json.gz",
-          "size_gz": 4491,
+          "size_gz": 4496,
           "resource_count": 7
         },
         "compute_ssl": {
           "file": "generated-schemas-staging/google/compute_ssl.json.gz",
-          "size_gz": 3786,
+          "size_gz": 3792,
           "resource_count": 4
         },
         "compute_storage": {
           "file": "generated-schemas-staging/google/compute_storage.json.gz",
-          "size_gz": 4206,
+          "size_gz": 4211,
           "resource_count": 7
         },
         "compute_subnetwork": {
           "file": "generated-schemas-staging/google/compute_subnetwork.json.gz",
-          "size_gz": 6189,
+          "size_gz": 6194,
           "resource_count": 6
         },
         "compute_target": {
           "file": "generated-schemas-staging/google/compute_target.json.gz",
-          "size_gz": 5804,
+          "size_gz": 5810,
           "resource_count": 9
         },
         "compute_url": {
           "file": "generated-schemas-staging/google/compute_url.json.gz",
-          "size_gz": 34322,
+          "size_gz": 34327,
           "resource_count": 1
         },
         "compute_vpn": {
           "file": "generated-schemas-staging/google/compute_vpn.json.gz",
-          "size_gz": 4008,
+          "size_gz": 4013,
           "resource_count": 3
         },
         "compute_wire": {
           "file": "generated-schemas-staging/google/compute_wire.json.gz",
-          "size_gz": 3086,
+          "size_gz": 3091,
           "resource_count": 1
         },
         "compute_zone": {
           "file": "generated-schemas-staging/google/compute_zone.json.gz",
-          "size_gz": 2535,
+          "size_gz": 2540,
           "resource_count": 1
         },
         "config": {
           "file": "generated-schemas-staging/google/config.json.gz",
-          "size_gz": 2965,
+          "size_gz": 2970,
           "resource_count": 1
         },
         "contact": {
           "file": "generated-schemas-staging/google/contact.json.gz",
-          "size_gz": 6577,
+          "size_gz": 6582,
           "resource_count": 8
         },
         "contact_center": {
           "file": "generated-schemas-staging/google/contact_center.json.gz",
-          "size_gz": 6584,
+          "size_gz": 6589,
           "resource_count": 8
         },
         "container": {
           "file": "generated-schemas-staging/google/container.json.gz",
-          "size_gz": 56661,
+          "size_gz": 56667,
           "resource_count": 23
         },
         "container_analysis": {
           "file": "generated-schemas-staging/google/container_analysis.json.gz",
-          "size_gz": 4254,
+          "size_gz": 4259,
           "resource_count": 6
         },
         "container_attached": {
           "file": "generated-schemas-staging/google/container_attached.json.gz",
-          "size_gz": 4239,
+          "size_gz": 4244,
           "resource_count": 3
         },
         "container_aws": {
           "file": "generated-schemas-staging/google/container_aws.json.gz",
-          "size_gz": 6487,
+          "size_gz": 6492,
           "resource_count": 3
         },
         "container_azure": {
           "file": "generated-schemas-staging/google/container_azure.json.gz",
-          "size_gz": 5900,
+          "size_gz": 5908,
           "resource_count": 4
         },
         "container_engine": {
           "file": "generated-schemas-staging/google/container_engine.json.gz",
-          "size_gz": 1860,
+          "size_gz": 1864,
           "resource_count": 1
         },
         "container_node": {
           "file": "generated-schemas-staging/google/container_node.json.gz",
-          "size_gz": 11047,
+          "size_gz": 11051,
           "resource_count": 1
         },
         "container_registry": {
           "file": "generated-schemas-staging/google/container_registry.json.gz",
-          "size_gz": 2040,
+          "size_gz": 2044,
           "resource_count": 3
         },
         "data": {
           "file": "generated-schemas-staging/google/data.json.gz",
-          "size_gz": 45829,
+          "size_gz": 45852,
           "resource_count": 36
         },
         "data_catalog": {
           "file": "generated-schemas-staging/google/data_catalog.json.gz",
-          "size_gz": 6126,
+          "size_gz": 6131,
           "resource_count": 23
         },
         "data_fusion": {
           "file": "generated-schemas-staging/google/data_fusion.json.gz",
-          "size_gz": 5440,
+          "size_gz": 5445,
           "resource_count": 5
         },
         "data_lineage": {
           "file": "generated-schemas-staging/google/data_lineage.json.gz",
-          "size_gz": 2568,
+          "size_gz": 2573,
           "resource_count": 2
         },
         "data_loss": {
           "file": "generated-schemas-staging/google/data_loss.json.gz",
-          "size_gz": 35183,
+          "size_gz": 35208,
           "resource_count": 5
         },
         "data_pipeline": {
           "file": "generated-schemas-staging/google/data_pipeline.json.gz",
-          "size_gz": 5421,
+          "size_gz": 5426,
           "resource_count": 1
         },
         "database": {
           "file": "generated-schemas-staging/google/database.json.gz",
-          "size_gz": 7219,
+          "size_gz": 7224,
           "resource_count": 3
         },
         "database_migration": {
           "file": "generated-schemas-staging/google/database_migration.json.gz",
-          "size_gz": 7229,
+          "size_gz": 7234,
           "resource_count": 3
         },
         "dataflow": {
           "file": "generated-schemas-staging/google/dataflow.json.gz",
-          "size_gz": 3386,
+          "size_gz": 3391,
           "resource_count": 1
         },
         "dataform": {
           "file": "generated-schemas-staging/google/dataform.json.gz",
-          "size_gz": 3734,
+          "size_gz": 3738,
           "resource_count": 7
         },
         "dataform_repository": {
           "file": "generated-schemas-staging/google/dataform_repository.json.gz",
-          "size_gz": 3366,
+          "size_gz": 3371,
           "resource_count": 5
         },
         "dataform_team": {
           "file": "generated-schemas-staging/google/dataform_team.json.gz",
-          "size_gz": 2155,
+          "size_gz": 2160,
           "resource_count": 1
         },
         "dataplex": {
           "file": "generated-schemas-staging/google/dataplex.json.gz",
-          "size_gz": 16372,
+          "size_gz": 16377,
           "resource_count": 57
         },
         "dataplex_aspect": {
           "file": "generated-schemas-staging/google/dataplex_aspect.json.gz",
-          "size_gz": 2927,
+          "size_gz": 2932,
           "resource_count": 5
         },
         "dataplex_asset": {
           "file": "generated-schemas-staging/google/dataplex_asset.json.gz",
-          "size_gz": 3974,
+          "size_gz": 3979,
           "resource_count": 5
         },
         "dataplex_data": {
           "file": "generated-schemas-staging/google/dataplex_data.json.gz",
-          "size_gz": 3439,
+          "size_gz": 3444,
           "resource_count": 7
         },
         "dataplex_datascan": {
           "file": "generated-schemas-staging/google/dataplex_datascan.json.gz",
-          "size_gz": 6574,
+          "size_gz": 6579,
           "resource_count": 5
         },
         "dataplex_entry": {
           "file": "generated-schemas-staging/google/dataplex_entry.json.gz",
-          "size_gz": 4417,
+          "size_gz": 4422,
           "resource_count": 12
         },
         "dataplex_glossary": {
           "file": "generated-schemas-staging/google/dataplex_glossary.json.gz",
-          "size_gz": 3087,
+          "size_gz": 3092,
           "resource_count": 7
         },
         "dataplex_lake": {
           "file": "generated-schemas-staging/google/dataplex_lake.json.gz",
-          "size_gz": 3035,
+          "size_gz": 3040,
           "resource_count": 5
         },
         "dataplex_metadata": {
           "file": "generated-schemas-staging/google/dataplex_metadata.json.gz",
-          "size_gz": 3218,
+          "size_gz": 3223,
           "resource_count": 1
         },
         "dataplex_task": {
           "file": "generated-schemas-staging/google/dataplex_task.json.gz",
-          "size_gz": 5102,
+          "size_gz": 5107,
           "resource_count": 5
         },
         "dataplex_zone": {
           "file": "generated-schemas-staging/google/dataplex_zone.json.gz",
-          "size_gz": 3727,
+          "size_gz": 3733,
           "resource_count": 5
         },
         "dataproc": {
           "file": "generated-schemas-staging/google/dataproc.json.gz",
-          "size_gz": 33899,
+          "size_gz": 33905,
           "resource_count": 40
         },
         "dataproc_autoscaling": {
           "file": "generated-schemas-staging/google/dataproc_autoscaling.json.gz",
-          "size_gz": 3682,
+          "size_gz": 3688,
           "resource_count": 5
         },
         "dataproc_cluster": {
           "file": "generated-schemas-staging/google/dataproc_cluster.json.gz",
-          "size_gz": 9375,
+          "size_gz": 9383,
           "resource_count": 5
         },
         "dataproc_gdc": {
           "file": "generated-schemas-staging/google/dataproc_gdc.json.gz",
-          "size_gz": 4551,
+          "size_gz": 4557,
           "resource_count": 3
         },
         "dataproc_job": {
           "file": "generated-schemas-staging/google/dataproc_job.json.gz",
-          "size_gz": 4793,
+          "size_gz": 4799,
           "resource_count": 5
         },
         "dataproc_metastore": {
           "file": "generated-schemas-staging/google/dataproc_metastore.json.gz",
-          "size_gz": 6531,
+          "size_gz": 6536,
           "resource_count": 19
         },
         "dataproc_session": {
           "file": "generated-schemas-staging/google/dataproc_session.json.gz",
-          "size_gz": 3812,
+          "size_gz": 3819,
           "resource_count": 1
         },
         "dataproc_workflow": {
           "file": "generated-schemas-staging/google/dataproc_workflow.json.gz",
-          "size_gz": 12013,
+          "size_gz": 12018,
           "resource_count": 1
         },
         "datastream": {
           "file": "generated-schemas-staging/google/datastream.json.gz",
-          "size_gz": 9052,
+          "size_gz": 9057,
           "resource_count": 4
         },
         "datastream_connection": {
           "file": "generated-schemas-staging/google/datastream_connection.json.gz",
-          "size_gz": 3896,
+          "size_gz": 3900,
           "resource_count": 1
         },
         "datastream_private": {
           "file": "generated-schemas-staging/google/datastream_private.json.gz",
-          "size_gz": 2798,
+          "size_gz": 2802,
           "resource_count": 1
         },
         "datastream_static": {
           "file": "generated-schemas-staging/google/datastream_static.json.gz",
-          "size_gz": 1784,
+          "size_gz": 1788,
           "resource_count": 1
         },
         "deployment": {
           "file": "generated-schemas-staging/google/deployment.json.gz",
-          "size_gz": 3044,
+          "size_gz": 3049,
           "resource_count": 1
         },
         "deployment_manager": {
           "file": "generated-schemas-staging/google/deployment_manager.json.gz",
-          "size_gz": 3052,
+          "size_gz": 3057,
           "resource_count": 1
         },
         "developer": {
           "file": "generated-schemas-staging/google/developer.json.gz",
-          "size_gz": 6484,
+          "size_gz": 6489,
           "resource_count": 4
         },
         "developer_connect": {
           "file": "generated-schemas-staging/google/developer_connect.json.gz",
-          "size_gz": 6492,
+          "size_gz": 6497,
           "resource_count": 4
         },
         "dialogflow": {
           "file": "generated-schemas-staging/google/dialogflow.json.gz",
-          "size_gz": 36571,
+          "size_gz": 36577,
           "resource_count": 25
         },
         "dialogflow_conversation": {
           "file": "generated-schemas-staging/google/dialogflow_conversation.json.gz",
-          "size_gz": 6113,
+          "size_gz": 6118,
           "resource_count": 1
         },
         "dialogflow_cx": {
           "file": "generated-schemas-staging/google/dialogflow_cx.json.gz",
-          "size_gz": 27267,
+          "size_gz": 27273,
           "resource_count": 15
         },
         "dialogflow_encryption": {
           "file": "generated-schemas-staging/google/dialogflow_encryption.json.gz",
-          "size_gz": 2078,
+          "size_gz": 2083,
           "resource_count": 1
         },
         "dialogflow_entity": {
           "file": "generated-schemas-staging/google/dialogflow_entity.json.gz",
-          "size_gz": 2640,
+          "size_gz": 2644,
           "resource_count": 1
         },
         "dialogflow_sip": {
           "file": "generated-schemas-staging/google/dialogflow_sip.json.gz",
-          "size_gz": 2292,
+          "size_gz": 2296,
           "resource_count": 1
         },
         "discovery": {
           "file": "generated-schemas-staging/google/discovery.json.gz",
-          "size_gz": 17534,
+          "size_gz": 17539,
           "resource_count": 22
         },
         "discovery_engine": {
           "file": "generated-schemas-staging/google/discovery_engine.json.gz",
-          "size_gz": 17541,
+          "size_gz": 17546,
           "resource_count": 22
         },
         "dns": {
           "file": "generated-schemas-staging/google/dns.json.gz",
-          "size_gz": 6858,
+          "size_gz": 6863,
           "resource_count": 14
         },
         "dns_managed": {
           "file": "generated-schemas-staging/google/dns_managed.json.gz",
-          "size_gz": 4500,
+          "size_gz": 4505,
           "resource_count": 7
         },
         "dns_record": {
           "file": "generated-schemas-staging/google/dns_record.json.gz",
-          "size_gz": 3458,
+          "size_gz": 3463,
           "resource_count": 3
         },
         "dns_response": {
           "file": "generated-schemas-staging/google/dns_response.json.gz",
-          "size_gz": 2983,
+          "size_gz": 2987,
           "resource_count": 2
         },
         "document": {
           "file": "generated-schemas-staging/google/document.json.gz",
-          "size_gz": 3947,
+          "size_gz": 3952,
           "resource_count": 5
         },
         "document_ai": {
           "file": "generated-schemas-staging/google/document_ai.json.gz",
-          "size_gz": 3950,
+          "size_gz": 3955,
           "resource_count": 5
         },
         "edgecontainer": {
           "file": "generated-schemas-staging/google/edgecontainer.json.gz",
-          "size_gz": 5811,
+          "size_gz": 5817,
           "resource_count": 3
         },
         "edgecontainer_node": {
           "file": "generated-schemas-staging/google/edgecontainer_node.json.gz",
-          "size_gz": 3054,
+          "size_gz": 3059,
           "resource_count": 1
         },
         "edgecontainer_vpn": {
           "file": "generated-schemas-staging/google/edgecontainer_vpn.json.gz",
-          "size_gz": 2852,
+          "size_gz": 2857,
           "resource_count": 1
         },
         "edgenetwork": {
           "file": "generated-schemas-staging/google/edgenetwork.json.gz",
-          "size_gz": 3163,
+          "size_gz": 3167,
           "resource_count": 3
         },
         "edgenetwork_interconnect": {
           "file": "generated-schemas-staging/google/edgenetwork_interconnect.json.gz",
-          "size_gz": 2889,
+          "size_gz": 2894,
           "resource_count": 1
         },
         "endpoints": {
           "file": "generated-schemas-staging/google/endpoints.json.gz",
-          "size_gz": 2792,
+          "size_gz": 2797,
           "resource_count": 9
         },
         "endpoints_service": {
           "file": "generated-schemas-staging/google/endpoints_service.json.gz",
-          "size_gz": 2800,
+          "size_gz": 2805,
           "resource_count": 9
         },
         "essential": {
           "file": "generated-schemas-staging/google/essential.json.gz",
-          "size_gz": 2324,
+          "size_gz": 2329,
           "resource_count": 1
         },
         "essential_contacts": {
           "file": "generated-schemas-staging/google/essential_contacts.json.gz",
-          "size_gz": 2333,
+          "size_gz": 2338,
           "resource_count": 1
         },
         "eventarc": {
           "file": "generated-schemas-staging/google/eventarc.json.gz",
-          "size_gz": 10489,
+          "size_gz": 10494,
           "resource_count": 11
         },
         "eventarc_google": {
           "file": "generated-schemas-staging/google/eventarc_google.json.gz",
-          "size_gz": 3324,
+          "size_gz": 3329,
           "resource_count": 2
         },
         "eventarc_message": {
           "file": "generated-schemas-staging/google/eventarc_message.json.gz",
-          "size_gz": 3130,
+          "size_gz": 3135,
           "resource_count": 1
         },
         "eventarc_pipeline": {
           "file": "generated-schemas-staging/google/eventarc_pipeline.json.gz",
-          "size_gz": 7689,
+          "size_gz": 7694,
           "resource_count": 5
         },
         "filestore": {
           "file": "generated-schemas-staging/google/filestore.json.gz",
-          "size_gz": 6209,
+          "size_gz": 6214,
           "resource_count": 4
         },
         "firebase": {
           "file": "generated-schemas-staging/google/firebase.json.gz",
-          "size_gz": 9665,
+          "size_gz": 9672,
           "resource_count": 15
         },
         "firebase_app": {
           "file": "generated-schemas-staging/google/firebase_app.json.gz",
-          "size_gz": 7875,
+          "size_gz": 7881,
           "resource_count": 13
         },
         "firebase_data": {
           "file": "generated-schemas-staging/google/firebase_data.json.gz",
-          "size_gz": 2791,
+          "size_gz": 2796,
           "resource_count": 1
         },
         "firebase_remote": {
           "file": "generated-schemas-staging/google/firebase_remote.json.gz",
-          "size_gz": 3353,
+          "size_gz": 3358,
           "resource_count": 1
         },
         "firebaserules": {
           "file": "generated-schemas-staging/google/firebaserules.json.gz",
-          "size_gz": 2693,
+          "size_gz": 2698,
           "resource_count": 2
         },
         "firestore": {
           "file": "generated-schemas-staging/google/firestore.json.gz",
-          "size_gz": 7518,
+          "size_gz": 7523,
           "resource_count": 8
         },
         "firestore_backup": {
           "file": "generated-schemas-staging/google/firestore_backup.json.gz",
-          "size_gz": 2523,
+          "size_gz": 2528,
           "resource_count": 1
         },
         "firestore_change": {
           "file": "generated-schemas-staging/google/firestore_change.json.gz",
-          "size_gz": 2508,
+          "size_gz": 2513,
           "resource_count": 1
         },
         "firestore_user": {
           "file": "generated-schemas-staging/google/firestore_user.json.gz",
-          "size_gz": 2408,
+          "size_gz": 2412,
           "resource_count": 1
         },
         "folder": {
           "file": "generated-schemas-staging/google/folder.json.gz",
-          "size_gz": 5190,
+          "size_gz": 5195,
           "resource_count": 10
         },
         "folder_access": {
           "file": "generated-schemas-staging/google/folder_access.json.gz",
-          "size_gz": 3117,
+          "size_gz": 3122,
           "resource_count": 1
         },
         "folder_iam": {
           "file": "generated-schemas-staging/google/folder_iam.json.gz",
-          "size_gz": 2402,
+          "size_gz": 2407,
           "resource_count": 5
         },
         "folder_organization": {
           "file": "generated-schemas-staging/google/folder_organization.json.gz",
-          "size_gz": 2979,
+          "size_gz": 2984,
           "resource_count": 2
         },
         "folders": {
           "file": "generated-schemas-staging/google/folders.json.gz",
-          "size_gz": 1825,
+          "size_gz": 1830,
           "resource_count": 1
         },
         "gemini": {
           "file": "generated-schemas-staging/google/gemini.json.gz",
-          "size_gz": 4495,
+          "size_gz": 4523,
           "resource_count": 16
         },
         "gemini_code": {
           "file": "generated-schemas-staging/google/gemini_code.json.gz",
-          "size_gz": 3203,
+          "size_gz": 3208,
           "resource_count": 3
         },
         "gemini_data": {
           "file": "generated-schemas-staging/google/gemini_data.json.gz",
-          "size_gz": 2801,
+          "size_gz": 2806,
           "resource_count": 2
         },
         "gemini_gemini": {
           "file": "generated-schemas-staging/google/gemini_gemini.json.gz",
-          "size_gz": 2904,
+          "size_gz": 2923,
           "resource_count": 2
         },
         "gemini_logging": {
           "file": "generated-schemas-staging/google/gemini_logging.json.gz",
-          "size_gz": 2688,
+          "size_gz": 2693,
           "resource_count": 2
         },
         "gemini_release": {
           "file": "generated-schemas-staging/google/gemini_release.json.gz",
-          "size_gz": 2707,
+          "size_gz": 2712,
           "resource_count": 2
         },
         "gemini_repository": {
           "file": "generated-schemas-staging/google/gemini_repository.json.gz",
-          "size_gz": 2770,
+          "size_gz": 2775,
           "resource_count": 5
         },
         "gke": {
           "file": "generated-schemas-staging/google/gke.json.gz",
-          "size_gz": 17371,
+          "size_gz": 17376,
           "resource_count": 36
         },
         "gke_backup": {
           "file": "generated-schemas-staging/google/gke_backup.json.gz",
-          "size_gz": 8033,
+          "size_gz": 8038,
           "resource_count": 12
         },
         "gke_hub": {
           "file": "generated-schemas-staging/google/gke_hub.json.gz",
-          "size_gz": 11903,
+          "size_gz": 11908,
           "resource_count": 24
         },
         "gkeonprem": {
           "file": "generated-schemas-staging/google/gkeonprem.json.gz",
-          "size_gz": 12717,
+          "size_gz": 12721,
           "resource_count": 6
         },
         "gkeonprem_bare": {
           "file": "generated-schemas-staging/google/gkeonprem_bare.json.gz",
-          "size_gz": 8072,
+          "size_gz": 8078,
           "resource_count": 3
         },
         "gkeonprem_vmware": {
           "file": "generated-schemas-staging/google/gkeonprem_vmware.json.gz",
-          "size_gz": 7938,
+          "size_gz": 7942,
           "resource_count": 3
         },
         "healthcare": {
           "file": "generated-schemas-staging/google/healthcare.json.gz",
-          "size_gz": 9665,
+          "size_gz": 9670,
           "resource_count": 27
         },
         "healthcare_consent": {
           "file": "generated-schemas-staging/google/healthcare_consent.json.gz",
-          "size_gz": 3042,
+          "size_gz": 3047,
           "resource_count": 5
         },
         "healthcare_dataset": {
           "file": "generated-schemas-staging/google/healthcare_dataset.json.gz",
-          "size_gz": 2587,
+          "size_gz": 2591,
           "resource_count": 5
         },
         "healthcare_dicom": {
           "file": "generated-schemas-staging/google/healthcare_dicom.json.gz",
-          "size_gz": 3262,
+          "size_gz": 3269,
           "resource_count": 5
         },
         "healthcare_fhir": {
           "file": "generated-schemas-staging/google/healthcare_fhir.json.gz",
-          "size_gz": 6659,
+          "size_gz": 6664,
           "resource_count": 5
         },
         "healthcare_hl7": {
           "file": "generated-schemas-staging/google/healthcare_hl7.json.gz",
-          "size_gz": 4161,
+          "size_gz": 4166,
           "resource_count": 5
         },
         "healthcare_pipeline": {
           "file": "generated-schemas-staging/google/healthcare_pipeline.json.gz",
-          "size_gz": 3603,
+          "size_gz": 3607,
           "resource_count": 1
         },
         "hypercomputecluster": {
           "file": "generated-schemas-staging/google/hypercomputecluster.json.gz",
-          "size_gz": 6390,
+          "size_gz": 6396,
           "resource_count": 1
         },
         "iam": {
           "file": "generated-schemas-staging/google/iam.json.gz",
-          "size_gz": 21674,
+          "size_gz": 21679,
           "resource_count": 34
         },
         "iam_access": {
           "file": "generated-schemas-staging/google/iam_access.json.gz",
-          "size_gz": 2605,
+          "size_gz": 2610,
           "resource_count": 1
         },
         "iam_deny": {
           "file": "generated-schemas-staging/google/iam_deny.json.gz",
-          "size_gz": 2943,
+          "size_gz": 2948,
           "resource_count": 1
         },
         "iam_folder": {
           "file": "generated-schemas-staging/google/iam_folder.json.gz",
-          "size_gz": 4286,
+          "size_gz": 4291,
           "resource_count": 1
         },
         "iam_folders": {
           "file": "generated-schemas-staging/google/iam_folders.json.gz",
-          "size_gz": 3723,
+          "size_gz": 3728,
           "resource_count": 1
         },
         "iam_oauth": {
           "file": "generated-schemas-staging/google/iam_oauth.json.gz",
-          "size_gz": 3339,
+          "size_gz": 3344,
           "resource_count": 2
         },
         "iam_organization": {
           "file": "generated-schemas-staging/google/iam_organization.json.gz",
-          "size_gz": 4292,
+          "size_gz": 4297,
           "resource_count": 1
         },
         "iam_organizations": {
           "file": "generated-schemas-staging/google/iam_organizations.json.gz",
-          "size_gz": 3791,
+          "size_gz": 3798,
           "resource_count": 1
         },
         "iam_principal": {
           "file": "generated-schemas-staging/google/iam_principal.json.gz",
-          "size_gz": 3156,
+          "size_gz": 3163,
           "resource_count": 1
         },
         "iam_project": {
           "file": "generated-schemas-staging/google/iam_project.json.gz",
-          "size_gz": 4284,
+          "size_gz": 4289,
           "resource_count": 1
         },
         "iam_projects": {
           "file": "generated-schemas-staging/google/iam_projects.json.gz",
-          "size_gz": 3780,
+          "size_gz": 3786,
           "resource_count": 1
         },
         "iam_testable": {
           "file": "generated-schemas-staging/google/iam_testable.json.gz",
-          "size_gz": 1843,
+          "size_gz": 1848,
           "resource_count": 1
         },
         "iam_workforce": {
           "file": "generated-schemas-staging/google/iam_workforce.json.gz",
-          "size_gz": 9018,
+          "size_gz": 9023,
           "resource_count": 9
         },
         "iam_workload": {
           "file": "generated-schemas-staging/google/iam_workload.json.gz",
-          "size_gz": 9452,
+          "size_gz": 9457,
           "resource_count": 11
         },
         "iap": {
           "file": "generated-schemas-staging/google/iap.json.gz",
-          "size_gz": 6140,
+          "size_gz": 6163,
           "resource_count": 74
         },
         "iap_agent": {
           "file": "generated-schemas-staging/google/iap_agent.json.gz",
-          "size_gz": 2076,
+          "size_gz": 2081,
           "resource_count": 16
         },
         "iap_app": {
           "file": "generated-schemas-staging/google/iap_app.json.gz",
-          "size_gz": 1956,
+          "size_gz": 1961,
           "resource_count": 8
         },
         "iap_location": {
           "file": "generated-schemas-staging/google/iap_location.json.gz",
-          "size_gz": 1899,
+          "size_gz": 1903,
           "resource_count": 4
         },
         "iap_tunnel": {
           "file": "generated-schemas-staging/google/iap_tunnel.json.gz",
-          "size_gz": 2455,
+          "size_gz": 2459,
           "resource_count": 13
         },
         "iap_web": {
           "file": "generated-schemas-staging/google/iap_web.json.gz",
-          "size_gz": 2272,
+          "size_gz": 2277,
           "resource_count": 32
         },
         "identity": {
           "file": "generated-schemas-staging/google/identity.json.gz",
-          "size_gz": 5536,
+          "size_gz": 5541,
           "resource_count": 8
         },
         "identity_platform": {
           "file": "generated-schemas-staging/google/identity_platform.json.gz",
-          "size_gz": 5545,
+          "size_gz": 5550,
           "resource_count": 8
         },
         "integration": {
           "file": "generated-schemas-staging/google/integration.json.gz",
-          "size_gz": 5298,
+          "size_gz": 5303,
           "resource_count": 3
         },
         "integration_connectors": {
           "file": "generated-schemas-staging/google/integration_connectors.json.gz",
-          "size_gz": 5309,
+          "size_gz": 5314,
           "resource_count": 3
         },
         "integrations": {
           "file": "generated-schemas-staging/google/integrations.json.gz",
-          "size_gz": 4654,
+          "size_gz": 4659,
           "resource_count": 2
         },
         "integrations_auth": {
           "file": "generated-schemas-staging/google/integrations_auth.json.gz",
-          "size_gz": 4092,
+          "size_gz": 4096,
           "resource_count": 1
         },
         "kms": {
           "file": "generated-schemas-staging/google/kms.json.gz",
-          "size_gz": 7582,
+          "size_gz": 7588,
           "resource_count": 34
         },
         "kms_autokey": {
           "file": "generated-schemas-staging/google/kms_autokey.json.gz",
-          "size_gz": 2374,
+          "size_gz": 2379,
           "resource_count": 2
         },
         "kms_crypto": {
           "file": "generated-schemas-staging/google/kms_crypto.json.gz",
-          "size_gz": 4889,
+          "size_gz": 4894,
           "resource_count": 11
         },
         "kms_ekm": {
           "file": "generated-schemas-staging/google/kms_ekm.json.gz",
-          "size_gz": 3181,
+          "size_gz": 3185,
           "resource_count": 5
         },
         "kms_key": {
           "file": "generated-schemas-staging/google/kms_key.json.gz",
-          "size_gz": 3684,
+          "size_gz": 3690,
           "resource_count": 11
         },
         "kms_project": {
           "file": "generated-schemas-staging/google/kms_project.json.gz",
-          "size_gz": 2207,
+          "size_gz": 2212,
           "resource_count": 1
         },
         "kms_secret": {
           "file": "generated-schemas-staging/google/kms_secret.json.gz",
-          "size_gz": 2226,
+          "size_gz": 2231,
           "resource_count": 4
         },
         "license": {
           "file": "generated-schemas-staging/google/license.json.gz",
-          "size_gz": 2728,
+          "size_gz": 2733,
           "resource_count": 1
         },
         "license_manager": {
           "file": "generated-schemas-staging/google/license_manager.json.gz",
-          "size_gz": 2736,
+          "size_gz": 2741,
           "resource_count": 1
         },
         "logging": {
           "file": "generated-schemas-staging/google/logging.json.gz",
-          "size_gz": 9944,
+          "size_gz": 9949,
           "resource_count": 29
         },
         "logging_billing": {
           "file": "generated-schemas-staging/google/logging_billing.json.gz",
-          "size_gz": 4322,
+          "size_gz": 4327,
           "resource_count": 3
         },
         "logging_folder": {
           "file": "generated-schemas-staging/google/logging_folder.json.gz",
-          "size_gz": 4926,
+          "size_gz": 4931,
           "resource_count": 5
         },
         "logging_linked": {
           "file": "generated-schemas-staging/google/logging_linked.json.gz",
-          "size_gz": 2689,
+          "size_gz": 2694,
           "resource_count": 1
         },
         "logging_log": {
           "file": "generated-schemas-staging/google/logging_log.json.gz",
-          "size_gz": 2886,
+          "size_gz": 2891,
           "resource_count": 7
         },
         "logging_organization": {
           "file": "generated-schemas-staging/google/logging_organization.json.gz",
-          "size_gz": 4935,
+          "size_gz": 4940,
           "resource_count": 5
         },
         "logging_project": {
           "file": "generated-schemas-staging/google/logging_project.json.gz",
-          "size_gz": 5095,
+          "size_gz": 5101,
           "resource_count": 5
         },
         "logging_saved": {
           "file": "generated-schemas-staging/google/logging_saved.json.gz",
-          "size_gz": 2578,
+          "size_gz": 2583,
           "resource_count": 1
         },
         "looker": {
           "file": "generated-schemas-staging/google/looker.json.gz",
-          "size_gz": 4649,
+          "size_gz": 4654,
           "resource_count": 1
         },
         "lustre": {
           "file": "generated-schemas-staging/google/lustre.json.gz",
-          "size_gz": 5204,
+          "size_gz": 5209,
           "resource_count": 2
         },
         "managed": {
           "file": "generated-schemas-staging/google/managed.json.gz",
-          "size_gz": 6488,
+          "size_gz": 6493,
           "resource_count": 5
         },
         "managed_kafka": {
           "file": "generated-schemas-staging/google/managed_kafka.json.gz",
-          "size_gz": 6494,
+          "size_gz": 6499,
           "resource_count": 5
         },
         "memcache": {
           "file": "generated-schemas-staging/google/memcache.json.gz",
-          "size_gz": 4226,
+          "size_gz": 4231,
           "resource_count": 2
         },
         "memorystore": {
           "file": "generated-schemas-staging/google/memorystore.json.gz",
-          "size_gz": 7722,
+          "size_gz": 7727,
           "resource_count": 5
         },
         "memorystore_acl": {
           "file": "generated-schemas-staging/google/memorystore_acl.json.gz",
-          "size_gz": 2639,
+          "size_gz": 2644,
           "resource_count": 2
         },
         "memorystore_instance": {
           "file": "generated-schemas-staging/google/memorystore_instance.json.gz",
-          "size_gz": 7372,
+          "size_gz": 7377,
           "resource_count": 3
         },
         "migration": {
           "file": "generated-schemas-staging/google/migration.json.gz",
-          "size_gz": 7926,
+          "size_gz": 7932,
           "resource_count": 10
         },
         "migration_center": {
           "file": "generated-schemas-staging/google/migration_center.json.gz",
-          "size_gz": 7933,
+          "size_gz": 7939,
           "resource_count": 10
         },
         "model": {
           "file": "generated-schemas-staging/google/model.json.gz",
-          "size_gz": 4204,
+          "size_gz": 4209,
           "resource_count": 2
         },
         "model_armor": {
           "file": "generated-schemas-staging/google/model_armor.json.gz",
-          "size_gz": 4210,
+          "size_gz": 4215,
           "resource_count": 2
         },
         "monitoring": {
           "file": "generated-schemas-staging/google/monitoring.json.gz",
-          "size_gz": 22988,
+          "size_gz": 22994,
           "resource_count": 17
         },
         "monitoring_alert": {
           "file": "generated-schemas-staging/google/monitoring_alert.json.gz",
-          "size_gz": 9311,
+          "size_gz": 9317,
           "resource_count": 1
         },
         "monitoring_app": {
           "file": "generated-schemas-staging/google/monitoring_app.json.gz",
-          "size_gz": 2568,
+          "size_gz": 2573,
           "resource_count": 1
         },
         "monitoring_cluster": {
           "file": "generated-schemas-staging/google/monitoring_cluster.json.gz",
-          "size_gz": 2616,
+          "size_gz": 2621,
           "resource_count": 1
         },
         "monitoring_custom": {
           "file": "generated-schemas-staging/google/monitoring_custom.json.gz",
-          "size_gz": 2557,
+          "size_gz": 2561,
           "resource_count": 1
         },
         "monitoring_istio": {
           "file": "generated-schemas-staging/google/monitoring_istio.json.gz",
-          "size_gz": 2593,
+          "size_gz": 2598,
           "resource_count": 1
         },
         "monitoring_mesh": {
           "file": "generated-schemas-staging/google/monitoring_mesh.json.gz",
-          "size_gz": 2585,
+          "size_gz": 2590,
           "resource_count": 1
         },
         "monitoring_metric": {
           "file": "generated-schemas-staging/google/monitoring_metric.json.gz",
-          "size_gz": 4129,
+          "size_gz": 4135,
           "resource_count": 1
         },
         "monitoring_monitored": {
           "file": "generated-schemas-staging/google/monitoring_monitored.json.gz",
-          "size_gz": 2310,
+          "size_gz": 2316,
           "resource_count": 1
         },
         "monitoring_notification": {
           "file": "generated-schemas-staging/google/monitoring_notification.json.gz",
-          "size_gz": 4223,
+          "size_gz": 4227,
           "resource_count": 2
         },
         "monitoring_uptime": {
           "file": "generated-schemas-staging/google/monitoring_uptime.json.gz",
-          "size_gz": 5830,
+          "size_gz": 5835,
           "resource_count": 2
         },
         "netapp": {
           "file": "generated-schemas-staging/google/netapp.json.gz",
-          "size_gz": 13840,
+          "size_gz": 13845,
           "resource_count": 11
         },
         "netapp_active": {
           "file": "generated-schemas-staging/google/netapp_active.json.gz",
-          "size_gz": 3717,
+          "size_gz": 3722,
           "resource_count": 1
         },
         "netapp_backup": {
           "file": "generated-schemas-staging/google/netapp_backup.json.gz",
-          "size_gz": 4101,
+          "size_gz": 4106,
           "resource_count": 3
         },
         "netapp_host": {
           "file": "generated-schemas-staging/google/netapp_host.json.gz",
-          "size_gz": 2715,
+          "size_gz": 2720,
           "resource_count": 1
         },
         "netapp_storage": {
           "file": "generated-schemas-staging/google/netapp_storage.json.gz",
-          "size_gz": 4012,
+          "size_gz": 4018,
           "resource_count": 1
         },
         "netapp_volume": {
           "file": "generated-schemas-staging/google/netapp_volume.json.gz",
-          "size_gz": 9505,
+          "size_gz": 9510,
           "resource_count": 4
         },
         "netblock": {
           "file": "generated-schemas-staging/google/netblock.json.gz",
-          "size_gz": 1788,
+          "size_gz": 1792,
           "resource_count": 1
         },
         "netblock_ip": {
           "file": "generated-schemas-staging/google/netblock_ip.json.gz",
-          "size_gz": 1791,
+          "size_gz": 1795,
           "resource_count": 1
         },
         "network": {
           "file": "generated-schemas-staging/google/network.json.gz",
-          "size_gz": 54455,
+          "size_gz": 54460,
           "resource_count": 78
         },
         "network_connectivity": {
           "file": "generated-schemas-staging/google/network_connectivity.json.gz",
-          "size_gz": 10542,
+          "size_gz": 10547,
           "resource_count": 15
         },
         "network_management": {
           "file": "generated-schemas-staging/google/network_management.json.gz",
-          "size_gz": 5659,
+          "size_gz": 5664,
           "resource_count": 6
         },
         "network_security": {
           "file": "generated-schemas-staging/google/network_security.json.gz",
-          "size_gz": 16353,
+          "size_gz": 16358,
           "resource_count": 31
         },
         "network_services": {
           "file": "generated-schemas-staging/google/network_services.json.gz",
-          "size_gz": 29791,
+          "size_gz": 29796,
           "resource_count": 26
         },
         "observability": {
           "file": "generated-schemas-staging/google/observability.json.gz",
-          "size_gz": 2741,
+          "size_gz": 3110,
+          "resource_count": 9
+        },
+        "observability_folder": {
+          "file": "generated-schemas-staging/google/observability_folder.json.gz",
+          "size_gz": 2021,
+          "resource_count": 2
+        },
+        "observability_organization": {
+          "file": "generated-schemas-staging/google/observability_organization.json.gz",
+          "size_gz": 2025,
+          "resource_count": 2
+        },
+        "observability_project": {
+          "file": "generated-schemas-staging/google/observability_project.json.gz",
+          "size_gz": 2014,
           "resource_count": 2
         },
         "observability_trace": {
           "file": "generated-schemas-staging/google/observability_trace.json.gz",
-          "size_gz": 2374,
+          "size_gz": 2379,
           "resource_count": 1
         },
         "oracle": {
           "file": "generated-schemas-staging/google/oracle.json.gz",
-          "size_gz": 25976,
+          "size_gz": 25982,
           "resource_count": 28
         },
         "oracle_database": {
           "file": "generated-schemas-staging/google/oracle_database.json.gz",
-          "size_gz": 25985,
+          "size_gz": 25991,
           "resource_count": 28
         },
         "org": {
           "file": "generated-schemas-staging/google/org.json.gz",
-          "size_gz": 4742,
+          "size_gz": 4747,
           "resource_count": 2
         },
         "org_policy": {
           "file": "generated-schemas-staging/google/org_policy.json.gz",
-          "size_gz": 4749,
+          "size_gz": 4754,
           "resource_count": 2
         },
         "organization": {
           "file": "generated-schemas-staging/google/organization.json.gz",
-          "size_gz": 4602,
+          "size_gz": 4607,
           "resource_count": 11
         },
         "organization_access": {
           "file": "generated-schemas-staging/google/organization_access.json.gz",
-          "size_gz": 2876,
+          "size_gz": 2881,
           "resource_count": 1
         },
         "organization_iam": {
           "file": "generated-schemas-staging/google/organization_iam.json.gz",
-          "size_gz": 3072,
+          "size_gz": 3077,
           "resource_count": 8
         },
         "organizations": {
           "file": "generated-schemas-staging/google/organizations.json.gz",
-          "size_gz": 1826,
+          "size_gz": 1830,
           "resource_count": 1
         },
         "os": {
           "file": "generated-schemas-staging/google/os.json.gz",
-          "size_gz": 27290,
+          "size_gz": 27295,
           "resource_count": 6
         },
         "os_config": {
           "file": "generated-schemas-staging/google/os_config.json.gz",
-          "size_gz": 26914,
+          "size_gz": 26920,
           "resource_count": 5
         },
         "os_login": {
           "file": "generated-schemas-staging/google/os_login.json.gz",
-          "size_gz": 2224,
+          "size_gz": 2228,
           "resource_count": 1
         },
         "parallelstore": {
           "file": "generated-schemas-staging/google/parallelstore.json.gz",
-          "size_gz": 3855,
+          "size_gz": 3860,
           "resource_count": 1
         },
         "parameter": {
           "file": "generated-schemas-staging/google/parameter.json.gz",
-          "size_gz": 3705,
+          "size_gz": 3710,
           "resource_count": 12
         },
         "parameter_manager": {
           "file": "generated-schemas-staging/google/parameter_manager.json.gz",
-          "size_gz": 3713,
+          "size_gz": 3718,
           "resource_count": 12
         },
         "privateca": {
           "file": "generated-schemas-staging/google/privateca.json.gz",
-          "size_gz": 13285,
+          "size_gz": 13290,
           "resource_count": 13
         },
         "privateca_ca": {
           "file": "generated-schemas-staging/google/privateca_ca.json.gz",
-          "size_gz": 6176,
+          "size_gz": 6181,
           "resource_count": 5
         },
         "privateca_certificate": {
           "file": "generated-schemas-staging/google/privateca_certificate.json.gz",
-          "size_gz": 11179,
+          "size_gz": 11184,
           "resource_count": 8
         },
         "privileged": {
           "file": "generated-schemas-staging/google/privileged.json.gz",
-          "size_gz": 4450,
+          "size_gz": 4456,
           "resource_count": 2
         },
         "privileged_access": {
           "file": "generated-schemas-staging/google/privileged_access.json.gz",
-          "size_gz": 4457,
+          "size_gz": 4463,
           "resource_count": 2
         },
         "project": {
           "file": "generated-schemas-staging/google/project.json.gz",
-          "size_gz": 6398,
+          "size_gz": 6400,
           "resource_count": 19
         },
         "project_access": {
           "file": "generated-schemas-staging/google/project_access.json.gz",
-          "size_gz": 3009,
+          "size_gz": 3015,
           "resource_count": 1
         },
         "project_default": {
           "file": "generated-schemas-staging/google/project_default.json.gz",
-          "size_gz": 2102,
+          "size_gz": 2108,
           "resource_count": 1
         },
         "project_iam": {
           "file": "generated-schemas-staging/google/project_iam.json.gz",
-          "size_gz": 3138,
+          "size_gz": 3143,
           "resource_count": 9
         },
         "project_organization": {
           "file": "generated-schemas-staging/google/project_organization.json.gz",
-          "size_gz": 2951,
+          "size_gz": 2956,
           "resource_count": 2
         },
         "project_usage": {
           "file": "generated-schemas-staging/google/project_usage.json.gz",
-          "size_gz": 2148,
+          "size_gz": 2154,
           "resource_count": 1
         },
         "projects": {
           "file": "generated-schemas-staging/google/projects.json.gz",
-          "size_gz": 1828,
+          "size_gz": 1833,
           "resource_count": 1
         },
         "public": {
           "file": "generated-schemas-staging/google/public.json.gz",
-          "size_gz": 2081,
+          "size_gz": 2086,
           "resource_count": 1
         },
         "public_ca": {
           "file": "generated-schemas-staging/google/public_ca.json.gz",
-          "size_gz": 2084,
+          "size_gz": 2089,
           "resource_count": 1
         },
         "pubsub": {
           "file": "generated-schemas-staging/google/pubsub.json.gz",
-          "size_gz": 13255,
+          "size_gz": 13260,
           "resource_count": 20
         },
         "pubsub_lite": {
           "file": "generated-schemas-staging/google/pubsub_lite.json.gz",
-          "size_gz": 2917,
+          "size_gz": 2920,
           "resource_count": 3
         },
         "pubsub_schema": {
           "file": "generated-schemas-staging/google/pubsub_schema.json.gz",
-          "size_gz": 2587,
+          "size_gz": 2592,
           "resource_count": 5
         },
         "pubsub_subscription": {
           "file": "generated-schemas-staging/google/pubsub_subscription.json.gz",
-          "size_gz": 8153,
+          "size_gz": 8158,
           "resource_count": 6
         },
         "pubsub_topic": {
           "file": "generated-schemas-staging/google/pubsub_topic.json.gz",
-          "size_gz": 6376,
+          "size_gz": 6381,
           "resource_count": 6
         },
         "recaptcha": {
           "file": "generated-schemas-staging/google/recaptcha.json.gz",
-          "size_gz": 3697,
+          "size_gz": 3703,
           "resource_count": 1
         },
         "recaptcha_enterprise": {
           "file": "generated-schemas-staging/google/recaptcha_enterprise.json.gz",
-          "size_gz": 3708,
+          "size_gz": 3714,
           "resource_count": 1
         },
         "redis": {
           "file": "generated-schemas-staging/google/redis.json.gz",
-          "size_gz": 11921,
+          "size_gz": 11926,
           "resource_count": 7
         },
         "redis_cluster": {
           "file": "generated-schemas-staging/google/redis_cluster.json.gz",
-          "size_gz": 7949,
+          "size_gz": 7954,
           "resource_count": 5
         },
         "resource": {
           "file": "generated-schemas-staging/google/resource.json.gz",
-          "size_gz": 2632,
+          "size_gz": 2637,
           "resource_count": 2
         },
         "resource_manager": {
           "file": "generated-schemas-staging/google/resource_manager.json.gz",
-          "size_gz": 2640,
+          "size_gz": 2645,
           "resource_count": 2
         },
         "scc": {
           "file": "generated-schemas-staging/google/scc.json.gz",
-          "size_gz": 8561,
+          "size_gz": 8566,
           "resource_count": 36
         },
         "scc_event": {
           "file": "generated-schemas-staging/google/scc_event.json.gz",
-          "size_gz": 2573,
+          "size_gz": 2578,
           "resource_count": 1
         },
         "scc_folder": {
           "file": "generated-schemas-staging/google/scc_folder.json.gz",
-          "size_gz": 4577,
+          "size_gz": 4582,
           "resource_count": 3
         },
         "scc_management": {
           "file": "generated-schemas-staging/google/scc_management.json.gz",
-          "size_gz": 4052,
+          "size_gz": 4057,
           "resource_count": 4
         },
         "scc_mute": {
           "file": "generated-schemas-staging/google/scc_mute.json.gz",
-          "size_gz": 2859,
+          "size_gz": 2865,
           "resource_count": 1
         },
         "scc_notification": {
           "file": "generated-schemas-staging/google/scc_notification.json.gz",
-          "size_gz": 2975,
+          "size_gz": 2980,
           "resource_count": 2
         },
         "scc_organization": {
           "file": "generated-schemas-staging/google/scc_organization.json.gz",
-          "size_gz": 4407,
+          "size_gz": 4413,
           "resource_count": 2
         },
         "scc_project": {
           "file": "generated-schemas-staging/google/scc_project.json.gz",
-          "size_gz": 4554,
+          "size_gz": 4559,
           "resource_count": 3
         },
         "scc_source": {
           "file": "generated-schemas-staging/google/scc_source.json.gz",
-          "size_gz": 2278,
+          "size_gz": 2283,
           "resource_count": 5
         },
         "scc_v2": {
           "file": "generated-schemas-staging/google/scc_v2.json.gz",
-          "size_gz": 4697,
+          "size_gz": 4702,
           "resource_count": 15
         },
         "secret": {
           "file": "generated-schemas-staging/google/secret.json.gz",
-          "size_gz": 6119,
+          "size_gz": 6124,
           "resource_count": 20
         },
         "secret_manager": {
           "file": "generated-schemas-staging/google/secret_manager.json.gz",
-          "size_gz": 6127,
+          "size_gz": 6132,
           "resource_count": 20
         },
         "secure": {
           "file": "generated-schemas-staging/google/secure.json.gz",
-          "size_gz": 4442,
+          "size_gz": 4447,
           "resource_count": 12
         },
         "secure_source": {
           "file": "generated-schemas-staging/google/secure_source.json.gz",
-          "size_gz": 4449,
+          "size_gz": 4454,
           "resource_count": 12
         },
         "securityposture": {
           "file": "generated-schemas-staging/google/securityposture.json.gz",
-          "size_gz": 5020,
+          "size_gz": 5025,
           "resource_count": 2
         },
         "securityposture_posture": {
           "file": "generated-schemas-staging/google/securityposture_posture.json.gz",
-          "size_gz": 5028,
+          "size_gz": 5033,
           "resource_count": 2
         },
         "service": {
           "file": "generated-schemas-staging/google/service.json.gz",
-          "size_gz": 5518,
+          "size_gz": 5523,
           "resource_count": 27
         },
         "service_account": {
           "file": "generated-schemas-staging/google/service_account.json.gz",
-          "size_gz": 3710,
+          "size_gz": 3715,
           "resource_count": 11
         },
         "service_directory": {
           "file": "generated-schemas-staging/google/service_directory.json.gz",
-          "size_gz": 3101,
+          "size_gz": 3106,
           "resource_count": 11
         },
         "service_networking": {
           "file": "generated-schemas-staging/google/service_networking.json.gz",
-          "size_gz": 2953,
+          "size_gz": 2958,
           "resource_count": 4
         },
         "site": {
           "file": "generated-schemas-staging/google/site.json.gz",
-          "size_gz": 2608,
+          "size_gz": 2613,
           "resource_count": 3
         },
         "site_verification": {
           "file": "generated-schemas-staging/google/site_verification.json.gz",
-          "size_gz": 2621,
+          "size_gz": 2626,
           "resource_count": 3
         },
         "sourcerepo": {
           "file": "generated-schemas-staging/google/sourcerepo.json.gz",
-          "size_gz": 2784,
+          "size_gz": 2789,
           "resource_count": 6
         },
         "sourcerepo_repository": {
           "file": "generated-schemas-staging/google/sourcerepo_repository.json.gz",
-          "size_gz": 2795,
+          "size_gz": 2800,
           "resource_count": 6
         },
         "spanner": {
           "file": "generated-schemas-staging/google/spanner.json.gz",
-          "size_gz": 7394,
+          "size_gz": 7399,
           "resource_count": 15
         },
         "spanner_backup": {
           "file": "generated-schemas-staging/google/spanner_backup.json.gz",
-          "size_gz": 3071,
+          "size_gz": 3076,
           "resource_count": 1
         },
         "spanner_database": {
           "file": "generated-schemas-staging/google/spanner_database.json.gz",
-          "size_gz": 3477,
+          "size_gz": 3481,
           "resource_count": 6
         },
         "spanner_instance": {
           "file": "generated-schemas-staging/google/spanner_instance.json.gz",
-          "size_gz": 5480,
+          "size_gz": 5485,
           "resource_count": 8
         },
         "sql": {
           "file": "generated-schemas-staging/google/sql.json.gz",
-          "size_gz": 16831,
+          "size_gz": 16836,
           "resource_count": 14
         },
         "sql_backup": {
           "file": "generated-schemas-staging/google/sql_backup.json.gz",
-          "size_gz": 2111,
+          "size_gz": 2116,
           "resource_count": 1
         },
         "sql_ca": {
           "file": "generated-schemas-staging/google/sql_ca.json.gz",
-          "size_gz": 1835,
+          "size_gz": 1839,
           "resource_count": 1
         },
         "sql_database": {
           "file": "generated-schemas-staging/google/sql_database.json.gz",
-          "size_gz": 14367,
+          "size_gz": 14372,
           "resource_count": 6
         },
         "sql_provision": {
           "file": "generated-schemas-staging/google/sql_provision.json.gz",
-          "size_gz": 2690,
+          "size_gz": 2697,
           "resource_count": 1
         },
         "sql_source": {
           "file": "generated-schemas-staging/google/sql_source.json.gz",
-          "size_gz": 2683,
+          "size_gz": 2688,
           "resource_count": 1
         },
         "sql_ssl": {
           "file": "generated-schemas-staging/google/sql_ssl.json.gz",
-          "size_gz": 2454,
+          "size_gz": 2459,
           "resource_count": 1
         },
         "storage": {
           "file": "generated-schemas-staging/google/storage.json.gz",
-          "size_gz": 23049,
-          "resource_count": 49
+          "size_gz": 24357,
+          "resource_count": 51
         },
         "storage_anywhere": {
           "file": "generated-schemas-staging/google/storage_anywhere.json.gz",
-          "size_gz": 2506,
+          "size_gz": 2511,
           "resource_count": 1
         },
         "storage_batch": {
           "file": "generated-schemas-staging/google/storage_batch.json.gz",
-          "size_gz": 2989,
+          "size_gz": 2995,
           "resource_count": 1
         },
         "storage_bucket": {
           "file": "generated-schemas-staging/google/storage_bucket.json.gz",
-          "size_gz": 9471,
+          "size_gz": 9477,
           "resource_count": 13
         },
         "storage_control": {
           "file": "generated-schemas-staging/google/storage_control.json.gz",
-          "size_gz": 3946,
+          "size_gz": 3951,
           "resource_count": 13
         },
         "storage_default": {
           "file": "generated-schemas-staging/google/storage_default.json.gz",
-          "size_gz": 2469,
+          "size_gz": 2474,
+          "resource_count": 2
+        },
+        "storage_ftp": {
+          "file": "generated-schemas-staging/google/storage_ftp.json.gz",
+          "size_gz": 3294,
           "resource_count": 2
         },
         "storage_hmac": {
           "file": "generated-schemas-staging/google/storage_hmac.json.gz",
-          "size_gz": 2281,
+          "size_gz": 2286,
           "resource_count": 1
         },
         "storage_insights": {
           "file": "generated-schemas-staging/google/storage_insights.json.gz",
-          "size_gz": 4206,
+          "size_gz": 4211,
           "resource_count": 3
         },
         "storage_managed": {
           "file": "generated-schemas-staging/google/storage_managed.json.gz",
-          "size_gz": 2469,
+          "size_gz": 2474,
           "resource_count": 5
         },
         "storage_object": {
           "file": "generated-schemas-staging/google/storage_object.json.gz",
-          "size_gz": 2576,
+          "size_gz": 2581,
           "resource_count": 3
         },
         "storage_project": {
           "file": "generated-schemas-staging/google/storage_project.json.gz",
-          "size_gz": 1791,
+          "size_gz": 1795,
           "resource_count": 1
         },
         "storage_transfer": {
           "file": "generated-schemas-staging/google/storage_transfer.json.gz",
-          "size_gz": 7043,
+          "size_gz": 7048,
           "resource_count": 3
         },
         "tags": {
           "file": "generated-schemas-staging/google/tags.json.gz",
-          "size_gz": 3669,
+          "size_gz": 3674,
           "resource_count": 16
         },
         "tags_location": {
           "file": "generated-schemas-staging/google/tags_location.json.gz",
-          "size_gz": 2336,
+          "size_gz": 2341,
           "resource_count": 1
         },
         "tags_tag": {
           "file": "generated-schemas-staging/google/tags_tag.json.gz",
-          "size_gz": 3582,
+          "size_gz": 3587,
           "resource_count": 15
         },
         "transcoder": {
           "file": "generated-schemas-staging/google/transcoder.json.gz",
-          "size_gz": 4833,
+          "size_gz": 4837,
           "resource_count": 2
         },
         "transcoder_job": {
           "file": "generated-schemas-staging/google/transcoder_job.json.gz",
-          "size_gz": 4837,
+          "size_gz": 4841,
           "resource_count": 2
         },
         "vector": {
           "file": "generated-schemas-staging/google/vector.json.gz",
-          "size_gz": 4483,
+          "size_gz": 4488,
           "resource_count": 3
         },
         "vector_search": {
           "file": "generated-schemas-staging/google/vector_search.json.gz",
-          "size_gz": 4490,
+          "size_gz": 4495,
           "resource_count": 3
         },
         "vertex": {
           "file": "generated-schemas-staging/google/vertex.json.gz",
-          "size_gz": 32205,
+          "size_gz": 35196,
           "resource_count": 29
         },
         "vertex_ai": {
           "file": "generated-schemas-staging/google/vertex_ai.json.gz",
-          "size_gz": 32208,
+          "size_gz": 35199,
           "resource_count": 29
         },
         "vmwareengine": {
           "file": "generated-schemas-staging/google/vmwareengine.json.gz",
-          "size_gz": 12027,
+          "size_gz": 12032,
           "resource_count": 22
         },
         "vmwareengine_external": {
           "file": "generated-schemas-staging/google/vmwareengine_external.json.gz",
-          "size_gz": 3070,
+          "size_gz": 3075,
           "resource_count": 4
         },
         "vmwareengine_network": {
           "file": "generated-schemas-staging/google/vmwareengine_network.json.gz",
-          "size_gz": 3862,
+          "size_gz": 3867,
           "resource_count": 6
         },
         "vmwareengine_nsx": {
           "file": "generated-schemas-staging/google/vmwareengine_nsx.json.gz",
-          "size_gz": 1970,
+          "size_gz": 1974,
           "resource_count": 1
         },
         "vmwareengine_private": {
           "file": "generated-schemas-staging/google/vmwareengine_private.json.gz",
-          "size_gz": 4735,
+          "size_gz": 4740,
           "resource_count": 2
         },
         "vmwareengine_vcenter": {
           "file": "generated-schemas-staging/google/vmwareengine_vcenter.json.gz",
-          "size_gz": 1970,
+          "size_gz": 1974,
           "resource_count": 1
         },
         "vpc": {
           "file": "generated-schemas-staging/google/vpc.json.gz",
-          "size_gz": 3079,
+          "size_gz": 3083,
           "resource_count": 2
         },
         "vpc_access": {
           "file": "generated-schemas-staging/google/vpc_access.json.gz",
-          "size_gz": 3086,
+          "size_gz": 3090,
           "resource_count": 2
         },
         "workbench": {
           "file": "generated-schemas-staging/google/workbench.json.gz",
-          "size_gz": 5994,
+          "size_gz": 5999,
           "resource_count": 5
         },
         "workbench_instance": {
           "file": "generated-schemas-staging/google/workbench_instance.json.gz",
-          "size_gz": 6003,
+          "size_gz": 6008,
           "resource_count": 5
         },
         "workflows": {
           "file": "generated-schemas-staging/google/workflows.json.gz",
-          "size_gz": 3648,
+          "size_gz": 3653,
           "resource_count": 1
         },
         "workload": {
           "file": "generated-schemas-staging/google/workload.json.gz",
-          "size_gz": 1908,
+          "size_gz": 1914,
           "resource_count": 1
         },
         "workload_identity": {
           "file": "generated-schemas-staging/google/workload_identity.json.gz",
-          "size_gz": 1917,
+          "size_gz": 1923,
           "resource_count": 1
         },
         "workstations": {
           "file": "generated-schemas-staging/google/workstations.json.gz",
-          "size_gz": 7822,
+          "size_gz": 7828,
           "resource_count": 11
         },
         "workstations_workstation": {
           "file": "generated-schemas-staging/google/workstations_workstation.json.gz",
-          "size_gz": 7834,
+          "size_gz": 7840,
           "resource_count": 11
         }
       }
