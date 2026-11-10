@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-03T10:40:21.300712+00:00",
+  "generated_at": "2026-11-10T10:55:49.113164+00:00",
   "providers": {
     "aws": {
       "provider": "aws",
       "namespace": "hashicorp",
-      "version": "6.71.0",
-      "generated_at": "2026-11-03T10:39:58.387780+00:00",
+      "version": "6.72.0",
+      "generated_at": "2026-11-10T10:55:26.806197+00:00",
       "generation_status": "ok",
       "error": null,
       "available_services": [
@@ -139,6 +139,7 @@
         "bedrockagentcore_resource",
         "bedrockagentcore_token",
         "bedrockagentcore_workload",
+        "bedrockdataautomation",
         "billing",
         "billing_service",
         "budgets",
@@ -604,6 +605,9 @@
         "lambdacore_network",
         "lambdamicrovms",
         "lambdamicrovms_image",
+        "lambdaweb",
+        "lambdaweb_function",
+        "lambdaweb_resource",
         "launch",
         "lb",
         "lb_cookie",
@@ -716,6 +720,7 @@
         "networkmanager_transit",
         "networkmanager_vpc",
         "networkmonitor",
+        "networksecuritymanager",
         "notifications",
         "notifications_channel",
         "notifications_event",
@@ -832,6 +837,7 @@
         "rds_orderable",
         "rds_reserved",
         "rds_shard",
+        "rds_tenant",
         "redshift",
         "redshift_authentication",
         "redshift_cluster",
@@ -1665,12 +1671,12 @@
         },
         "batch": {
           "file": "generated-schemas-staging/aws/batch.json.gz",
-          "size_gz": 7413,
+          "size_gz": 7427,
           "resource_count": 8
         },
         "batch_compute": {
           "file": "generated-schemas-staging/aws/batch_compute.json.gz",
-          "size_gz": 5452,
+          "size_gz": 5468,
           "resource_count": 2
         },
         "batch_job": {
@@ -1822,6 +1828,11 @@
           "file": "generated-schemas-staging/aws/bedrockagentcore_workload.json.gz",
           "size_gz": 5054,
           "resource_count": 1
+        },
+        "bedrockdataautomation": {
+          "file": "generated-schemas-staging/aws/bedrockdataautomation.json.gz",
+          "size_gz": 5963,
+          "resource_count": 3
         },
         "billing": {
           "file": "generated-schemas-staging/aws/billing.json.gz",
@@ -2080,7 +2091,7 @@
         },
         "cloudtrail": {
           "file": "generated-schemas-staging/aws/cloudtrail.json.gz",
-          "size_gz": 5599,
+          "size_gz": 5610,
           "resource_count": 4
         },
         "cloudtrail_event": {
@@ -2960,8 +2971,8 @@
         },
         "ec2": {
           "file": "generated-schemas-staging/aws/ec2.json.gz",
-          "size_gz": 14122,
-          "resource_count": 102
+          "size_gz": 14158,
+          "resource_count": 103
         },
         "ec2_allowed": {
           "file": "generated-schemas-staging/aws/ec2_allowed.json.gz",
@@ -2975,8 +2986,8 @@
         },
         "ec2_capacity": {
           "file": "generated-schemas-staging/aws/ec2_capacity.json.gz",
-          "size_gz": 5715,
-          "resource_count": 4
+          "size_gz": 5768,
+          "resource_count": 5
         },
         "ec2_carrier": {
           "file": "generated-schemas-staging/aws/ec2_carrier.json.gz",
@@ -3265,12 +3276,12 @@
         },
         "elasticache": {
           "file": "generated-schemas-staging/aws/elasticache.json.gz",
-          "size_gz": 7353,
+          "size_gz": 7352,
           "resource_count": 18
         },
         "elasticache_global": {
           "file": "generated-schemas-staging/aws/elasticache_global.json.gz",
-          "size_gz": 5232,
+          "size_gz": 5255,
           "resource_count": 1
         },
         "elasticache_parameter": {
@@ -4130,12 +4141,12 @@
         },
         "lambdacore": {
           "file": "generated-schemas-staging/aws/lambdacore.json.gz",
-          "size_gz": 5319,
+          "size_gz": 5335,
           "resource_count": 1
         },
         "lambdacore_network": {
           "file": "generated-schemas-staging/aws/lambdacore_network.json.gz",
-          "size_gz": 5327,
+          "size_gz": 5343,
           "resource_count": 1
         },
         "lambdamicrovms": {
@@ -4147,6 +4158,21 @@
           "file": "generated-schemas-staging/aws/lambdamicrovms_image.json.gz",
           "size_gz": 5708,
           "resource_count": 2
+        },
+        "lambdaweb": {
+          "file": "generated-schemas-staging/aws/lambdaweb.json.gz",
+          "size_gz": 5836,
+          "resource_count": 6
+        },
+        "lambdaweb_function": {
+          "file": "generated-schemas-staging/aws/lambdaweb_function.json.gz",
+          "size_gz": 5817,
+          "resource_count": 5
+        },
+        "lambdaweb_resource": {
+          "file": "generated-schemas-staging/aws/lambdaweb_resource.json.gz",
+          "size_gz": 4999,
+          "resource_count": 1
         },
         "launch": {
           "file": "generated-schemas-staging/aws/launch.json.gz",
@@ -4708,6 +4734,11 @@
           "size_gz": 5130,
           "resource_count": 2
         },
+        "networksecuritymanager": {
+          "file": "generated-schemas-staging/aws/networksecuritymanager.json.gz",
+          "size_gz": 5275,
+          "resource_count": 2
+        },
         "notifications": {
           "file": "generated-schemas-staging/aws/notifications.json.gz",
           "size_gz": 5322,
@@ -5145,13 +5176,13 @@
         },
         "quicksight": {
           "file": "generated-schemas-staging/aws/quicksight.json.gz",
-          "size_gz": 163584,
-          "resource_count": 30
+          "size_gz": 163609,
+          "resource_count": 31
         },
         "quicksight_account": {
           "file": "generated-schemas-staging/aws/quicksight_account.json.gz",
-          "size_gz": 5416,
-          "resource_count": 2
+          "size_gz": 5441,
+          "resource_count": 3
         },
         "quicksight_custom": {
           "file": "generated-schemas-staging/aws/quicksight_custom.json.gz",
@@ -5240,8 +5271,8 @@
         },
         "rds": {
           "file": "generated-schemas-staging/aws/rds.json.gz",
-          "size_gz": 8886,
-          "resource_count": 25
+          "size_gz": 9018,
+          "resource_count": 26
         },
         "rds_cluster": {
           "file": "generated-schemas-staging/aws/rds_cluster.json.gz",
@@ -5286,6 +5317,11 @@
         "rds_shard": {
           "file": "generated-schemas-staging/aws/rds_shard.json.gz",
           "size_gz": 5334,
+          "resource_count": 1
+        },
+        "rds_tenant": {
+          "file": "generated-schemas-staging/aws/rds_tenant.json.gz",
+          "size_gz": 5451,
           "resource_count": 1
         },
         "redshift": {
@@ -6988,8 +7024,8 @@
     "azurerm": {
       "provider": "azurerm",
       "namespace": "hashicorp",
-      "version": "5.12.0",
-      "generated_at": "2026-11-03T10:40:14.538418+00:00",
+      "version": "5.13.0",
+      "generated_at": "2026-11-10T10:55:41.424070+00:00",
       "generation_status": "ok",
       "error": null,
       "available_services": [
@@ -7805,12 +7841,12 @@
         },
         "container": {
           "file": "generated-schemas-staging/azurerm/container.json.gz",
-          "size_gz": 11266,
+          "size_gz": 11303,
           "resource_count": 30
         },
         "container_app": {
           "file": "generated-schemas-staging/azurerm/container_app.json.gz",
-          "size_gz": 8993,
+          "size_gz": 9029,
           "resource_count": 13
         },
         "container_connected": {
@@ -7895,8 +7931,8 @@
         },
         "data": {
           "file": "generated-schemas-staging/azurerm/data.json.gz",
-          "size_gz": 8187,
-          "resource_count": 83
+          "size_gz": 8213,
+          "resource_count": 84
         },
         "data_factory": {
           "file": "generated-schemas-staging/azurerm/data_factory.json.gz",
@@ -7905,8 +7941,8 @@
         },
         "data_protection": {
           "file": "generated-schemas-staging/azurerm/data_protection.json.gz",
-          "size_gz": 3890,
-          "resource_count": 17
+          "size_gz": 3915,
+          "resource_count": 18
         },
         "data_share": {
           "file": "generated-schemas-staging/azurerm/data_share.json.gz",
@@ -8420,7 +8456,7 @@
         },
         "kubernetes": {
           "file": "generated-schemas-staging/azurerm/kubernetes.json.gz",
-          "size_gz": 8198,
+          "size_gz": 8205,
           "resource_count": 17
         },
         "kubernetes_automatic": {
@@ -8430,7 +8466,7 @@
         },
         "kubernetes_cluster": {
           "file": "generated-schemas-staging/azurerm/kubernetes_cluster.json.gz",
-          "size_gz": 6987,
+          "size_gz": 6993,
           "resource_count": 7
         },
         "kubernetes_fleet": {
@@ -8520,7 +8556,7 @@
         },
         "linux": {
           "file": "generated-schemas-staging/azurerm/linux.json.gz",
-          "size_gz": 28118,
+          "size_gz": 28137,
           "resource_count": 8
         },
         "linux_function": {
@@ -8530,7 +8566,7 @@
         },
         "linux_virtual": {
           "file": "generated-schemas-staging/azurerm/linux_virtual.json.gz",
-          "size_gz": 4508,
+          "size_gz": 4519,
           "resource_count": 2
         },
         "linux_web": {
@@ -8790,12 +8826,12 @@
         },
         "netapp": {
           "file": "generated-schemas-staging/azurerm/netapp.json.gz",
-          "size_gz": 6371,
+          "size_gz": 6647,
           "resource_count": 26
         },
         "netapp_account": {
           "file": "generated-schemas-staging/azurerm/netapp_account.json.gz",
-          "size_gz": 3733,
+          "size_gz": 4006,
           "resource_count": 4
         },
         "netapp_backup": {
@@ -8810,7 +8846,7 @@
         },
         "netapp_volume": {
           "file": "generated-schemas-staging/azurerm/netapp_volume.json.gz",
-          "size_gz": 5104,
+          "size_gz": 5102,
           "resource_count": 12
         },
         "network": {
@@ -8940,12 +8976,12 @@
         },
         "orchestrated": {
           "file": "generated-schemas-staging/azurerm/orchestrated.json.gz",
-          "size_gz": 4423,
+          "size_gz": 4455,
           "resource_count": 2
         },
         "orchestrated_virtual": {
           "file": "generated-schemas-staging/azurerm/orchestrated_virtual.json.gz",
-          "size_gz": 4431,
+          "size_gz": 4463,
           "resource_count": 2
         },
         "palo": {
@@ -9390,12 +9426,12 @@
         },
         "storage": {
           "file": "generated-schemas-staging/azurerm/storage.json.gz",
-          "size_gz": 7717,
+          "size_gz": 7737,
           "resource_count": 49
         },
         "storage_account": {
           "file": "generated-schemas-staging/azurerm/storage_account.json.gz",
-          "size_gz": 5068,
+          "size_gz": 5084,
           "resource_count": 11
         },
         "storage_blob": {
@@ -9715,7 +9751,7 @@
         },
         "windows": {
           "file": "generated-schemas-staging/azurerm/windows.json.gz",
-          "size_gz": 28480,
+          "size_gz": 28490,
           "resource_count": 8
         },
         "windows_function": {
@@ -9725,7 +9761,7 @@
         },
         "windows_virtual": {
           "file": "generated-schemas-staging/azurerm/windows_virtual.json.gz",
-          "size_gz": 4571,
+          "size_gz": 4586,
           "resource_count": 2
         },
         "windows_web": {
@@ -9748,8 +9784,8 @@
     "google": {
       "provider": "google",
       "namespace": "hashicorp",
-      "version": "8.9.0",
-      "generated_at": "2026-11-03T10:40:17.500066+00:00",
+      "version": "8.10.0",
+      "generated_at": "2026-11-10T10:55:44.784501+00:00",
       "generation_status": "ok",
       "error": null,
       "available_services": [
@@ -10461,12 +10497,12 @@
         },
         "artifact": {
           "file": "generated-schemas-staging/google/artifact.json.gz",
-          "size_gz": 7954,
+          "size_gz": 8112,
           "resource_count": 25
         },
         "artifact_registry": {
           "file": "generated-schemas-staging/google/artifact_registry.json.gz",
-          "size_gz": 7963,
+          "size_gz": 8121,
           "resource_count": 25
         },
         "assured": {
@@ -10481,12 +10517,12 @@
         },
         "backup": {
           "file": "generated-schemas-staging/google/backup.json.gz",
-          "size_gz": 13500,
+          "size_gz": 13604,
           "resource_count": 16
         },
         "backup_dr": {
           "file": "generated-schemas-staging/google/backup_dr.json.gz",
-          "size_gz": 13503,
+          "size_gz": 13607,
           "resource_count": 16
         },
         "beyondcorp": {
@@ -10501,7 +10537,7 @@
         },
         "biglake": {
           "file": "generated-schemas-staging/google/biglake.json.gz",
-          "size_gz": 7284,
+          "size_gz": 7421,
           "resource_count": 33
         },
         "biglake_hive": {
@@ -10511,12 +10547,12 @@
         },
         "biglake_iceberg": {
           "file": "generated-schemas-staging/google/biglake_iceberg.json.gz",
-          "size_gz": 4711,
+          "size_gz": 4845,
           "resource_count": 15
         },
         "bigquery": {
           "file": "generated-schemas-staging/google/bigquery.json.gz",
-          "size_gz": 42077,
+          "size_gz": 42592,
           "resource_count": 57
         },
         "bigquery_analytics": {
@@ -10541,7 +10577,7 @@
         },
         "bigquery_data": {
           "file": "generated-schemas-staging/google/bigquery_data.json.gz",
-          "size_gz": 4976,
+          "size_gz": 5181,
           "resource_count": 2
         },
         "bigquery_datapolicy": {
@@ -10556,7 +10592,7 @@
         },
         "bigquery_dataset": {
           "file": "generated-schemas-staging/google/bigquery_dataset.json.gz",
-          "size_gz": 6360,
+          "size_gz": 6560,
           "resource_count": 7
         },
         "bigquery_default": {
@@ -10921,7 +10957,7 @@
         },
         "compute": {
           "file": "generated-schemas-staging/google/compute.json.gz",
-          "size_gz": 258463,
+          "size_gz": 258633,
           "resource_count": 251
         },
         "compute_attached": {
@@ -10931,7 +10967,7 @@
         },
         "compute_backend": {
           "file": "generated-schemas-staging/google/compute_backend.json.gz",
-          "size_gz": 18906,
+          "size_gz": 18875,
           "resource_count": 6
         },
         "compute_bulk": {
@@ -11071,7 +11107,7 @@
         },
         "compute_region": {
           "file": "generated-schemas-staging/google/compute_region.json.gz",
-          "size_gz": 74939,
+          "size_gz": 75148,
           "resource_count": 51
         },
         "compute_reservation": {
@@ -11216,7 +11252,7 @@
         },
         "data": {
           "file": "generated-schemas-staging/google/data.json.gz",
-          "size_gz": 50525,
+          "size_gz": 51738,
           "resource_count": 37
         },
         "data_catalog": {
@@ -11236,7 +11272,7 @@
         },
         "data_loss": {
           "file": "generated-schemas-staging/google/data_loss.json.gz",
-          "size_gz": 39849,
+          "size_gz": 41059,
           "resource_count": 6
         },
         "data_pipeline": {
@@ -11281,7 +11317,7 @@
         },
         "dataplex": {
           "file": "generated-schemas-staging/google/dataplex.json.gz",
-          "size_gz": 16441,
+          "size_gz": 16797,
           "resource_count": 57
         },
         "dataplex_aspect": {
@@ -11296,12 +11332,12 @@
         },
         "dataplex_data": {
           "file": "generated-schemas-staging/google/dataplex_data.json.gz",
-          "size_gz": 3451,
+          "size_gz": 3518,
           "resource_count": 7
         },
         "dataplex_datascan": {
           "file": "generated-schemas-staging/google/dataplex_datascan.json.gz",
-          "size_gz": 6646,
+          "size_gz": 6951,
           "resource_count": 5
         },
         "dataplex_entry": {
@@ -11336,7 +11372,7 @@
         },
         "dataproc": {
           "file": "generated-schemas-staging/google/dataproc.json.gz",
-          "size_gz": 35394,
+          "size_gz": 35615,
           "resource_count": 40
         },
         "dataproc_autoscaling": {
@@ -11361,7 +11397,7 @@
         },
         "dataproc_metastore": {
           "file": "generated-schemas-staging/google/dataproc_metastore.json.gz",
-          "size_gz": 6543,
+          "size_gz": 6619,
           "resource_count": 19
         },
         "dataproc_session": {
@@ -11371,7 +11407,7 @@
         },
         "dataproc_workflow": {
           "file": "generated-schemas-staging/google/dataproc_workflow.json.gz",
-          "size_gz": 13109,
+          "size_gz": 13349,
           "resource_count": 1
         },
         "datastream": {
@@ -11446,12 +11482,12 @@
         },
         "discovery": {
           "file": "generated-schemas-staging/google/discovery.json.gz",
-          "size_gz": 18547,
+          "size_gz": 18692,
           "resource_count": 22
         },
         "discovery_engine": {
           "file": "generated-schemas-staging/google/discovery_engine.json.gz",
-          "size_gz": 18554,
+          "size_gz": 18699,
           "resource_count": 22
         },
         "dns": {
@@ -11536,12 +11572,12 @@
         },
         "eventarc": {
           "file": "generated-schemas-staging/google/eventarc.json.gz",
-          "size_gz": 10501,
+          "size_gz": 10709,
           "resource_count": 11
         },
         "eventarc_google": {
           "file": "generated-schemas-staging/google/eventarc_google.json.gz",
-          "size_gz": 3336,
+          "size_gz": 3564,
           "resource_count": 2
         },
         "eventarc_message": {
@@ -11586,7 +11622,7 @@
         },
         "firestore": {
           "file": "generated-schemas-staging/google/firestore.json.gz",
-          "size_gz": 7529,
+          "size_gz": 7658,
           "resource_count": 8
         },
         "firestore_backup": {
@@ -11856,12 +11892,12 @@
         },
         "integration": {
           "file": "generated-schemas-staging/google/integration.json.gz",
-          "size_gz": 5310,
+          "size_gz": 5602,
           "resource_count": 3
         },
         "integration_connectors": {
           "file": "generated-schemas-staging/google/integration_connectors.json.gz",
-          "size_gz": 5321,
+          "size_gz": 5613,
           "resource_count": 3
         },
         "integrations": {
@@ -11971,13 +12007,13 @@
         },
         "managed": {
           "file": "generated-schemas-staging/google/managed.json.gz",
-          "size_gz": 6836,
-          "resource_count": 5
+          "size_gz": 6964,
+          "resource_count": 6
         },
         "managed_kafka": {
           "file": "generated-schemas-staging/google/managed_kafka.json.gz",
-          "size_gz": 6842,
-          "resource_count": 5
+          "size_gz": 6970,
+          "resource_count": 6
         },
         "memcache": {
           "file": "generated-schemas-staging/google/memcache.json.gz",
@@ -12011,12 +12047,12 @@
         },
         "model": {
           "file": "generated-schemas-staging/google/model.json.gz",
-          "size_gz": 4358,
+          "size_gz": 4962,
           "resource_count": 2
         },
         "model_armor": {
           "file": "generated-schemas-staging/google/model_armor.json.gz",
-          "size_gz": 4364,
+          "size_gz": 4968,
           "resource_count": 2
         },
         "monitoring": {
@@ -12076,7 +12112,7 @@
         },
         "netapp": {
           "file": "generated-schemas-staging/google/netapp.json.gz",
-          "size_gz": 13853,
+          "size_gz": 13901,
           "resource_count": 11
         },
         "netapp_active": {
@@ -12101,7 +12137,7 @@
         },
         "netapp_volume": {
           "file": "generated-schemas-staging/google/netapp_volume.json.gz",
-          "size_gz": 9517,
+          "size_gz": 9562,
           "resource_count": 4
         },
         "netblock": {
@@ -12116,7 +12152,7 @@
         },
         "network": {
           "file": "generated-schemas-staging/google/network.json.gz",
-          "size_gz": 58947,
+          "size_gz": 59736,
           "resource_count": 81
         },
         "network_connectivity": {
@@ -12131,12 +12167,12 @@
         },
         "network_security": {
           "file": "generated-schemas-staging/google/network_security.json.gz",
-          "size_gz": 18188,
+          "size_gz": 18415,
           "resource_count": 31
         },
         "network_services": {
           "file": "generated-schemas-staging/google/network_services.json.gz",
-          "size_gz": 32309,
+          "size_gz": 32864,
           "resource_count": 29
         },
         "observability": {
@@ -12166,13 +12202,13 @@
         },
         "oracle": {
           "file": "generated-schemas-staging/google/oracle.json.gz",
-          "size_gz": 26205,
-          "resource_count": 28
+          "size_gz": 26579,
+          "resource_count": 30
         },
         "oracle_database": {
           "file": "generated-schemas-staging/google/oracle_database.json.gz",
-          "size_gz": 26214,
-          "resource_count": 28
+          "size_gz": 26588,
+          "resource_count": 30
         },
         "org": {
           "file": "generated-schemas-staging/google/org.json.gz",
@@ -12236,12 +12272,12 @@
         },
         "privateca": {
           "file": "generated-schemas-staging/google/privateca.json.gz",
-          "size_gz": 13420,
+          "size_gz": 13710,
           "resource_count": 13
         },
         "privateca_ca": {
           "file": "generated-schemas-staging/google/privateca_ca.json.gz",
-          "size_gz": 6262,
+          "size_gz": 6553,
           "resource_count": 5
         },
         "privateca_certificate": {
@@ -12306,7 +12342,7 @@
         },
         "pubsub": {
           "file": "generated-schemas-staging/google/pubsub.json.gz",
-          "size_gz": 14116,
+          "size_gz": 14808,
           "resource_count": 20
         },
         "pubsub_lite": {
@@ -12321,12 +12357,12 @@
         },
         "pubsub_subscription": {
           "file": "generated-schemas-staging/google/pubsub_subscription.json.gz",
-          "size_gz": 9354,
+          "size_gz": 9834,
           "resource_count": 6
         },
         "pubsub_topic": {
           "file": "generated-schemas-staging/google/pubsub_topic.json.gz",
-          "size_gz": 6388,
+          "size_gz": 6562,
           "resource_count": 6
         },
         "recaptcha": {
@@ -12411,13 +12447,13 @@
         },
         "secret": {
           "file": "generated-schemas-staging/google/secret.json.gz",
-          "size_gz": 6235,
-          "resource_count": 20
+          "size_gz": 7103,
+          "resource_count": 21
         },
         "secret_manager": {
           "file": "generated-schemas-staging/google/secret_manager.json.gz",
-          "size_gz": 6243,
-          "resource_count": 20
+          "size_gz": 7111,
+          "resource_count": 21
         },
         "secure": {
           "file": "generated-schemas-staging/google/secure.json.gz",
@@ -12501,7 +12537,7 @@
         },
         "sql": {
           "file": "generated-schemas-staging/google/sql.json.gz",
-          "size_gz": 17044,
+          "size_gz": 17640,
           "resource_count": 14
         },
         "sql_backup": {
@@ -12516,7 +12552,7 @@
         },
         "sql_database": {
           "file": "generated-schemas-staging/google/sql_database.json.gz",
-          "size_gz": 14572,
+          "size_gz": 15153,
           "resource_count": 6
         },
         "sql_provision": {
@@ -12536,7 +12572,7 @@
         },
         "storage": {
           "file": "generated-schemas-staging/google/storage.json.gz",
-          "size_gz": 24503,
+          "size_gz": 24775,
           "resource_count": 51
         },
         "storage_anywhere": {
@@ -12546,7 +12582,7 @@
         },
         "storage_batch": {
           "file": "generated-schemas-staging/google/storage_batch.json.gz",
-          "size_gz": 3002,
+          "size_gz": 3303,
           "resource_count": 1
         },
         "storage_bucket": {
@@ -12636,13 +12672,13 @@
         },
         "vertex": {
           "file": "generated-schemas-staging/google/vertex.json.gz",
-          "size_gz": 44101,
-          "resource_count": 35
+          "size_gz": 46331,
+          "resource_count": 36
         },
         "vertex_ai": {
           "file": "generated-schemas-staging/google/vertex_ai.json.gz",
-          "size_gz": 44104,
-          "resource_count": 35
+          "size_gz": 46334,
+          "resource_count": 36
         },
         "vmwareengine": {
           "file": "generated-schemas-staging/google/vmwareengine.json.gz",
